@@ -1,0 +1,176 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   BASE — PingPlay Landing
+   tokens, reset, tipografia, foco acessível, barra de acessibilidade,
+   modos de contraste, níveis de fonte, movimento reduzido
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@font-face {
+  font-family: 'Cocogoose';
+  src: url('/fonts/Cocogoose.otf') format('opentype');
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Marca */
+  --accent: #40C4F1;        /* azul de ação */
+  --accent-ink: #0E1516;    /* tinta sobre o azul */
+  --roxo: #583192;          /* Formal Purple */
+  --roxo-2: #563092;
+  --roxo-bg: #2A1850;
+  --roxo-deep: #34206A;
+  --lavanda: #F1ECF9;
+  --aqua: #7DCED7;
+  /* Neutros */
+  --ink: #231542;
+  --ink-2: #1F2625;
+  --body: #4F5151;
+  --body-2: #5B5470;
+  --muted: #8A9393;
+  --line: #E7EEF0;
+  --line-2: #E1ECEE;
+  /* Layout */
+  --maxw: 1200px;
+  --pad-x: 26px;
+  --sec-pad: clamp(56px, 8vw, 96px);
+  --fscale: 1;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: #fff;
+  color: var(--body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  line-height: 1.5;
+}
+
+img { max-width: 100%; }
+::selection { background: var(--accent); color: var(--accent-ink); }
+
+h1, h2, h3 { font-family: 'Cocogoose', 'Inter', sans-serif; }
+
+.container { max-width: var(--maxw); margin: 0 auto; padding-left: var(--pad-x); padding-right: var(--pad-x); }
+
+/* ── SCREEN READER ONLY ── */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important; height: 1px !important;
+  padding: 0 !important; margin: -1px !important;
+  overflow: hidden !important; clip: rect(0,0,0,0) !important;
+  white-space: nowrap !important; border: 0 !important;
+}
+
+/* ── SKIP LINK (WCAG 2.4.1) ── */
+.skip-link {
+  position: absolute; left: -9999px; top: 0; z-index: 300;
+  background: var(--roxo); color: #fff;
+  padding: 12px 18px; border-radius: 0 0 10px 0;
+  font: 700 15px 'Inter', sans-serif; text-decoration: none;
+}
+.skip-link:focus { left: 0; }
+
+/* ── FOCO VISÍVEL (WCAG 2.4.7 / 2.4.11) ──
+   Anel branco + halo roxo: visível tanto em fundo claro quanto escuro. */
+a, button, input, select, textarea, [tabindex] { outline: none; }
+:focus-visible {
+  outline: 3px solid #fff !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 6px var(--roxo) !important;
+  border-radius: 5px;
+}
+
+/* ═══ BARRA DE ACESSIBILIDADE ═══ */
+.a11y-bar {
+  background: #14101E; color: #fff;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px;
+  padding: 6px 20px; font-size: 13px; position: relative;
+}
+.a11y-skip-links { display: flex; gap: 12px; }
+.a11y-skip-btn {
+  color: #cdc6dd; text-decoration: none; font-size: 12px;
+  padding: 7px 12px; border-radius: 4px; white-space: nowrap;
+  transition: background .15s, color .15s;
+}
+.a11y-skip-btn:hover, .a11y-skip-btn:focus {
+  background: var(--accent); color: var(--accent-ink);
+}
+.a11y-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.a11y-label { color: #b3aac6; font-size: 12px; white-space: nowrap; }
+
+.a11y-btn, .a11y-contrast-btn, .a11y-decl-link {
+  background: transparent; border: 1.5px solid #6f6685; color: #fff;
+  padding: 7px 12px; border-radius: 4px; font-size: 12px;
+  cursor: pointer; transition: all .15s; font-family: inherit; white-space: nowrap;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+}
+.a11y-btn { font-weight: 700; font-size: 13px; }
+.a11y-btn:hover, .a11y-contrast-btn:hover, .a11y-decl-link:hover,
+.a11y-btn:focus-visible, .a11y-contrast-btn:focus-visible, .a11y-decl-link:focus-visible {
+  border-color: var(--accent); color: var(--accent);
+}
+.a11y-contrast-wrap { position: relative; }
+.a11y-contrast-btn.has-mode { border-color: var(--accent); background: var(--accent); color: var(--accent-ink); }
+
+.a11y-contrast-menu {
+  position: absolute; top: calc(100% + 6px); left: 0;
+  background: #241C36; border: 1px solid #443a5c; border-radius: 8px;
+  min-width: 190px; z-index: 300; overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,.5);
+}
+.a11y-contrast-menu[hidden] { display: none; }
+.a11y-contrast-menu button {
+  display: flex; align-items: center; gap: 9px; width: 100%;
+  background: transparent; border: none; color: #fff;
+  padding: 11px 16px; text-align: left; font-size: 13px;
+  cursor: pointer; font-family: inherit; transition: background .15s;
+}
+.a11y-contrast-menu .cm-check { width: 14px; flex: 0 0 14px; color: var(--accent); font-weight: 700; visibility: hidden; }
+.a11y-contrast-menu button.cm-active { font-weight: 700; }
+.a11y-contrast-menu button.cm-active .cm-check { visibility: visible; }
+.a11y-contrast-menu-title {
+  padding: 9px 16px 5px; font-size: 11px; font-weight: 700;
+  letter-spacing: .4px; text-transform: uppercase; color: #b3aac6;
+}
+.a11y-contrast-menu button:hover, .a11y-contrast-menu button:focus-visible { background: var(--roxo); }
+.a11y-contrast-menu button:focus-visible { outline: 2px solid #fff !important; outline-offset: -3px !important; box-shadow: none !important; }
+
+/* Esconde o botão nativo do VLibras (acionamos pela barra) */
+[vw-access-button] { opacity: 0.001; }
+
+/* ── MODOS DE CONTRASTE (WCAG 1.4.3) ── */
+body.contrast-high      { filter: contrast(1.5) brightness(1.06); }
+body.contrast-inverted  { filter: invert(1) hue-rotate(180deg); }
+body.contrast-grayscale { filter: grayscale(1); }
+/* Não inverter as imagens duas vezes no modo invertido */
+body.contrast-inverted img { filter: invert(1) hue-rotate(180deg); }
+
+/* ── NÍVEIS DE FONTE (WCAG 1.4.4) ── */
+body.font-lg { --fscale: 1.13; }
+body.font-xl { --fscale: 1.25; }
+body.font-lg *, body.font-xl * {
+  font-size: calc(1em * var(--fscale)) !important;
+  line-height: 1.5 !important;
+}
+
+/* ── MOVIMENTO REDUZIDO (WCAG 2.3.3) ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .a11y-bar { padding: 5px 14px; }
+  .a11y-label { display: none; }
+  .a11y-skip-btn { font-size: 11px; padding: 5px 8px; }
+}

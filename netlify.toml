@@ -1,0 +1,26 @@
+# Netlify — PingPlay Landing (site estático, sem build step)
+[build]
+  publish = "."
+  command = ""
+
+# JS/CSS sem hash no nome → revalidar sempre (evita servir versão velha em cache)
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Fonte e imagens podem cachear por bastante tempo
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"

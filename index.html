@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PingPlay — A melhor experiência de acessibilidade audiovisual</title>
+  <meta name="description" content="PingPlay leva legenda, Libras e audiodescrição para dentro da experiência do cinema. Peça um filme com #QueroNoPingPlay, entre na lista para testar nos cinemas e na lista de desejo dos óculos.">
+  <meta property="og:title" content="PingPlay — Acessibilidade audiovisual de verdade">
+  <meta property="og:description" content="Legenda, Libras e audiodescrição dentro da experiência do cinema — não na segunda tela.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://queronopingplay.com/">
+  <link rel="icon" href="/assets/pingplay-logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/landing.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Pular para o conteúdo</a>
+  <div class="sr-only" id="a11y-live" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- ═══ BARRA DE ACESSIBILIDADE ═══ -->
+  <div class="a11y-bar" role="toolbar" aria-label="Ferramentas de acessibilidade">
+    <div class="a11y-skip-links">
+      <a class="a11y-skip-btn" href="#main-content">Ir para o conteúdo</a>
+      <a class="a11y-skip-btn" href="#main-nav">Ir para o menu</a>
+    </div>
+    <div class="a11y-controls">
+      <span class="a11y-label">Tamanho do texto:</span>
+      <button class="a11y-btn" type="button" onclick="changeFontSize('increase')" aria-label="Aumentar tamanho da fonte">A+</button>
+      <button class="a11y-btn" type="button" onclick="changeFontSize('decrease')" aria-label="Diminuir tamanho da fonte">A-</button>
+      <div class="a11y-contrast-wrap">
+        <button class="a11y-contrast-btn" type="button" onclick="toggleContrastMenu(this)" aria-expanded="false" aria-controls="contrast-menu" aria-label="Opções de contraste">&#9680; Contraste</button>
+        <div id="contrast-menu" class="a11y-contrast-menu" hidden role="menu" aria-label="Modos de contraste">
+          <div class="a11y-contrast-menu-title" aria-hidden="true">Modo de contraste</div>
+          <button role="menuitemradio" aria-checked="true"  data-contrast="default"   onclick="setContrast('default')"><span class="cm-check" aria-hidden="true">✓</span>Normal</button>
+          <button role="menuitemradio" aria-checked="false" data-contrast="high"      onclick="setContrast('high')"><span class="cm-check" aria-hidden="true">✓</span>Alto contraste</button>
+          <button role="menuitemradio" aria-checked="false" data-contrast="inverted"  onclick="setContrast('inverted')"><span class="cm-check" aria-hidden="true">✓</span>Invertido</button>
+          <button role="menuitemradio" aria-checked="false" data-contrast="grayscale" onclick="setContrast('grayscale')"><span class="cm-check" aria-hidden="true">✓</span>Escala de cinza</button>
+        </div>
+      </div>
+      <button class="a11y-btn" type="button" onclick="toggleVLibras()" aria-label="Ativar tradução em Libras (VLibras)">&#9995; Libras</button>
+      <a class="a11y-decl-link" href="#acessibilidade">&#9679; Acessibilidade</a>
+    </div>
+  </div>
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="site-header" role="banner">
+    <div class="container inner">
+      <a href="#topo" class="brand" aria-label="PingPlay — início">
+        <img src="/assets/pingplay-logo.png" alt="PingPlay">
+      </a>
+      <nav id="main-nav" class="main-nav" aria-label="Menu principal">
+        <a href="#pedir" class="strong"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg><span class="lbl">#QueroNoPingPlay</span></a>
+        <a href="#recursos"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="3"></rect><path d="M11 18h2"></path></svg><span class="lbl">Recursos</span></a>
+        <a href="#testar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="15" r="4"></circle><circle cx="18" cy="15" r="4"></circle><path d="M14 15a2 2 0 0 0-2-2 2 2 0 0 0-2 2"></path><path d="M2.5 13 5 7c.7-1.3 1.4-2 3-2"></path><path d="M21.5 13 19 7c-.7-1.3-1.5-2-3-2"></path></svg><span class="lbl">Testar nos cinemas</span></a>
+        <a href="#comprar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"></rect><path d="M12 8v13"></path><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"></path></svg><span class="lbl">Lista de desejo</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content" tabindex="-1">
+
+    <!-- ═══ HERO ═══ -->
+    <section id="topo" class="hero" aria-labelledby="hero-h1">
+      <img src="/assets/hero-cinema.jpg" alt="Plateia no cinema usando os óculos PingPlay, com a tela exibindo legenda e janela de Libras">
+      <div class="hero-veil" aria-hidden="true"></div>
+      <div class="hero-content">
+        <div class="hero-inner">
+          <span class="eyebrow">A nova experiência PingPlay</span>
+          <h1 id="hero-h1">A melhor experiência de <span class="hl">acessibilidade audiovisual</span>.</h1>
+          <p>Legendas, LIBRAS e audiodescrição acontecem <strong>dentro da experiência</strong> — não na segunda tela.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ ANTES / AGORA ═══ -->
+    <section class="antes" aria-labelledby="antes-h2">
+      <div class="inner">
+        <div class="section-intro">
+          <span class="eyebrow">O que muda na prática</span>
+          <h2 id="antes-h2">Sua atenção volta para onde sempre deveria estar: o filme.</h2>
+        </div>
+        <div class="antes-grid">
+          <div class="ba-card card-antes">
+            <img src="/assets/antes.jpg" alt="No cinema, atenção dividida — rosto iluminado pela luz do celular enquanto o filme passa ao fundo">
+            <span class="lbl">Antes</span>
+            <h3>Duas telas, atenção dividida</h3>
+            <ul class="feature-list">
+              <li><span class="dot" aria-hidden="true"></span>Olhar para o filme e para o celular ao mesmo tempo.</li>
+              <li><span class="dot" aria-hidden="true"></span>Perder cenas, expressões, diálogos e momentos importantes.</li>
+              <li><span class="dot" aria-hidden="true"></span>Cansaço visual e a sensação constante de estar de fora.</li>
+            </ul>
+          </div>
+          <div class="ba-card card-agora">
+            <div class="glow" aria-hidden="true"></div>
+            <div class="rel">
+              <img src="/assets/agora.jpg" alt="Pessoa imersa no filme no cinema, expressão de quem vive a história — sem celular na mão">
+              <span class="lbl">Agora</span>
+              <h3>Uma experiência, inteira</h3>
+              <ul class="feature-list">
+                <li><span class="dot" aria-hidden="true"></span>Legendas e Libras acontecem dentro da cena.</li>
+                <li><span class="dot" aria-hidden="true"></span>Audiodescrição, busca e sincronismo por comando de voz.</li>
+                <li><span class="dot" aria-hidden="true"></span>Você inteiro dentro do filme, sem dividir a atenção.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ RECURSOS ═══ -->
+    <section id="recursos" class="recursos section" aria-labelledby="recursos-h2">
+      <div class="container">
+        <div class="section-intro">
+          <span class="eyebrow">Grandes diferenciais</span>
+          <h2 id="recursos-h2">Acessibilidade que cada pessoa controla do seu jeito.</h2>
+          <p>Não é um recurso só. É controle total da experiência.<br>Para quem ouve com os olhos, e para quem assiste com os ouvidos.</p>
+        </div>
+
+        <!-- Diferencial 1 -->
+        <div class="diff diff-1">
+          <div class="diff-text">
+            <span class="badge badge-roxo">01 · Personalização</span>
+            <h3>Legenda e Libras sob seu controle</h3>
+            <p>Cada pessoa enxerga e lê de um jeito. No PingPlay, a legenda e a janela de Libras se adaptam a você — não o contrário.</p>
+            <ul class="feature-list">
+              <li><span class="mk" aria-hidden="true"><span></span></span><span><strong>Legenda:</strong> tamanho, cor, fonte, brilho, fundo e posição na tela.</span></li>
+              <li><span class="mk" aria-hidden="true"><span></span></span><span><strong>Libras:</strong> tamanho e posição da janela do intérprete (esquerda, centro ou direita).</span></li>
+              <li><span class="mk" aria-hidden="true"><span></span></span><span><strong>Sincronismo:</strong> tudo alinhado com o filme, com um toque.</span></li>
+            </ul>
+          </div>
+          <div class="diff-media">
+            <div class="phone" role="img" aria-label="Tela de configuração de legenda no app PingPlay: controles de brilho, tamanho da legenda, fundo, fonte OpenSans, seleção de cor da legenda e ajuste de posição na tela.">
+              <div aria-hidden="true" style="width:235px;border-radius:30px;background:#0c0c0f;padding:9px;box-shadow:0 34px 64px -30px rgba(40,20,80,.6);border:1px solid #221c2c;">
+                <div style="border-radius:23px;background:#161517;overflow:hidden;">
+                  <div style="padding:15px 13px 12px;display:flex;flex-direction:column;gap:13px;">
+                    <div style="display:flex;align-items:center;gap:9px;border:1.5px solid #6B3FD0;border-radius:11px;padding:10px 12px;">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9B7BE6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"></rect><path d="M7 11.5a2 2 0 1 0 0 1.5M16 11.5a2 2 0 1 0 0 1.5"></path></svg>
+                      <span style="font:700 14px Inter,sans-serif;color:#F2EEFA;">Legendado</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:9px;"><span style="width:28px;height:28px;border-radius:50%;background:rgba(124,77,224,.18);display:inline-flex;align-items:center;justify-content:center;flex:none;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A98AEA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></span><span style="font:600 12.5px Inter,sans-serif;color:#CFC8DC;">Brilho/Luminosidade</span></div>
+                    <div style="height:9px;border-radius:99px;background:#3a3942;"><div style="width:100%;height:100%;border-radius:99px;background:#6B3FD0;"></div></div>
+                    <div style="display:flex;align-items:center;gap:9px;"><span style="width:28px;height:28px;border-radius:50%;background:rgba(124,77,224,.18);display:inline-flex;align-items:center;justify-content:center;flex:none;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A98AEA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V5a1 1 0 0 1 1-1h3M20 8V5a1 1 0 0 0-1-1h-3M4 16v3a1 1 0 0 0 1 1h3M20 16v3a1 1 0 0 1-1 1h-3"></path></svg></span><span style="font:600 12.5px Inter,sans-serif;color:#CFC8DC;">Tamanho da legenda</span></div>
+                    <div style="height:9px;border-radius:99px;background:#3a3942;"><div style="width:100%;height:100%;border-radius:99px;background:#6B3FD0;"></div></div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:9px;"><span style="font:600 12.5px Inter,sans-serif;color:#CFC8DC;">Fundo da legenda</span><span style="width:38px;height:21px;border-radius:99px;background:#3a3942;position:relative;flex:none;"><span style="position:absolute;top:2.5px;left:3px;width:16px;height:16px;border-radius:50%;background:#cfc8dc;"></span></span></div>
+                    <div style="border:1px solid #322c3c;border-radius:9px;padding:10px 12px;font:600 12.5px Inter,sans-serif;color:#E8E2F2;">OpenSans</div>
+                    <div style="display:flex;gap:8px;">
+                      <span style="width:38px;height:30px;border-radius:8px;background:#fff;"></span>
+                      <span style="width:38px;height:30px;border-radius:8px;background:#15A6F0;"></span>
+                      <span style="width:38px;height:30px;border-radius:8px;background:#37C871;"></span>
+                      <span style="width:38px;height:30px;border-radius:8px;background:#F5C518;box-shadow:0 0 0 2px #161517,0 0 0 4px #F5C518;"></span>
+                      <span style="width:38px;height:30px;border-radius:8px;background:#7CC9F0;"></span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:9px;"><span style="width:28px;height:28px;border-radius:50%;background:rgba(124,77,224,.18);display:inline-flex;align-items:center;justify-content:center;flex:none;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A98AEA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V5a1 1 0 0 1 1-1h3M20 8V5a1 1 0 0 0-1-1h-3M4 16v3a1 1 0 0 0 1 1h3M20 16v3a1 1 0 0 1-1 1h-3"></path><circle cx="12" cy="12" r="2.5"></circle></svg></span><span style="font:600 12.5px Inter,sans-serif;color:#CFC8DC;">Posição da legenda</span></div>
+                    <div style="display:flex;justify-content:center;margin-top:2px;"><span style="width:96px;height:96px;border-radius:50%;background:#2a2932;display:flex;align-items:center;justify-content:center;position:relative;"><span style="position:absolute;top:7px;color:#8a8499;font-size:11px;">▲</span><span style="position:absolute;bottom:7px;color:#8a8499;font-size:11px;">▼</span><span style="position:absolute;left:9px;color:#8a8499;font-size:11px;">◀</span><span style="position:absolute;right:9px;color:#8a8499;font-size:11px;">▶</span><span style="width:46px;height:46px;border-radius:50%;background:#161517;"></span></span></div>
+                  </div>
+                  <div style="height:30px;display:flex;align-items:center;justify-content:space-around;color:#5b5667;font-size:13px;">❘❘❘&nbsp;&nbsp;&nbsp;○&nbsp;&nbsp;&nbsp;‹</div>
+                </div>
+              </div>
+            </div>
+            <div class="phone" role="img" aria-label="Tela de configuração de Libras no app PingPlay: controles de brilho, tamanho do vídeo, posição da janela do intérprete (Centro selecionado) e botão Sincronizar.">
+              <div aria-hidden="true" style="width:235px;border-radius:30px;background:#0c0c0f;padding:9px;box-shadow:0 34px 64px -30px rgba(40,20,80,.6);border:1px solid #221c2c;">
+                <div style="border-radius:23px;background:#161517;overflow:hidden;display:flex;flex-direction:column;">
+                  <div style="padding:15px 13px 12px;display:flex;flex-direction:column;gap:14px;flex:1;">
+                    <div style="display:flex;align-items:center;gap:9px;border:1.5px solid #6B3FD0;border-radius:11px;padding:10px 12px;">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9B7BE6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11V5.5a1.5 1.5 0 0 1 3 0V10M10 9.5V4a1.5 1.5 0 0 1 3 0v5.5M13 9.5V5a1.5 1.5 0 0 1 3 0v7c0 4-2.5 7-6 7s-6-2-7-5l-1-2.5a1.5 1.5 0 0 1 2.6-1.4L7 12"></path></svg>
+                      <span style="font:700 14px Inter,sans-serif;color:#F2EEFA;">Libras</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:9px;"><span style="width:28px;height:28px;border-radius:50%;background:rgba(124,77,224,.18);display:inline-flex;align-items:center;justify-content:center;flex:none;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A98AEA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></span><span style="font:600 12.5px Inter,sans-serif;color:#CFC8DC;">Brilho/Luminosidade</span></div>
+                    <div style="height:9px;border-radius:99px;background:#3a3942;"><div style="width:85%;height:100%;border-radius:99px;background:#6B3FD0;"></div></div>
+                    <div style="display:flex;align-items:center;gap:9px;"><span style="width:28px;height:28px;border-radius:50%;background:rgba(124,77,224,.18);display:inline-flex;align-items:center;justify-content:center;flex:none;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A98AEA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V5a1 1 0 0 1 1-1h3M20 8V5a1 1 0 0 0-1-1h-3M4 16v3a1 1 0 0 0 1 1h3M20 16v3a1 1 0 0 1-1 1h-3"></path></svg></span><span style="font:600 12.5px Inter,sans-serif;color:#CFC8DC;">Tamanho do vídeo</span></div>
+                    <div style="height:9px;border-radius:99px;background:#3a3942;"><div style="width:72%;height:100%;border-radius:99px;background:#6B3FD0;"></div></div>
+                    <div style="display:flex;align-items:center;gap:9px;"><span style="width:28px;height:28px;border-radius:50%;background:rgba(124,77,224,.18);display:inline-flex;align-items:center;justify-content:center;flex:none;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A98AEA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V5a1 1 0 0 1 1-1h3M20 8V5a1 1 0 0 0-1-1h-3M4 16v3a1 1 0 0 0 1 1h3M20 16v3a1 1 0 0 1-1 1h-3"></path><circle cx="12" cy="12" r="2.5"></circle></svg></span><span style="font:600 12.5px Inter,sans-serif;color:#CFC8DC;">Posição do vídeo</span></div>
+                    <div style="display:flex;gap:7px;">
+                      <span style="flex:1;text-align:center;border:1px solid #322c3c;border-radius:9px;padding:9px 4px;font:600 11.5px Inter,sans-serif;color:#CFC8DC;">Esquerda</span>
+                      <span style="flex:1;text-align:center;border:1.5px solid #7C4FE0;border-radius:9px;padding:9px 4px;font:700 11.5px Inter,sans-serif;color:#fff;background:rgba(124,77,224,.22);">Centro</span>
+                      <span style="flex:1;text-align:center;border:1px solid #322c3c;border-radius:9px;padding:9px 4px;font:600 11.5px Inter,sans-serif;color:#CFC8DC;">Direita</span>
+                    </div>
+                    <div style="display:flex;justify-content:center;margin-top:2px;"><span style="width:96px;height:96px;border-radius:50%;background:#2a2932;display:flex;align-items:center;justify-content:center;position:relative;"><span style="position:absolute;top:7px;color:#8a8499;font-size:11px;">▲</span><span style="position:absolute;bottom:7px;color:#8a8499;font-size:11px;">▼</span><span style="position:absolute;left:9px;color:#8a8499;font-size:11px;">◀</span><span style="position:absolute;right:9px;color:#8a8499;font-size:11px;">▶</span><span style="width:46px;height:46px;border-radius:50%;background:#161517;"></span></span></div>
+                  </div>
+                  <div style="margin:0 9px 9px;border-radius:11px;background:#6B3FD0;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;font:700 13px Inter,sans-serif;color:#fff;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v4h-4"></path></svg>Sincronizar</div>
+                  <div style="height:30px;display:flex;align-items:center;justify-content:space-around;color:#5b5667;font-size:13px;">❘❘❘&nbsp;&nbsp;&nbsp;○&nbsp;&nbsp;&nbsp;‹</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Diferencial 2 -->
+        <div class="diff diff-2">
+          <div class="diff-media">
+            <div class="phone" role="img" aria-label="Tela de comando de voz do app PingPlay: status 'Ouvindo', botão de microfone azul com ondas de áudio e o comando de exemplo 'PingPlay, aumentar a audiodescrição', com sugestões 'Pausar o filme' e 'Repetir a última cena'.">
+              <div aria-hidden="true" style="width:248px;border-radius:32px;background:#0c0c0f;padding:9px;box-shadow:0 34px 64px -30px rgba(40,20,80,.6);border:1px solid #221c2c;">
+                <div style="border-radius:25px;background:linear-gradient(180deg,#1a1330,#120c22);overflow:hidden;display:flex;flex-direction:column;min-height:474px;">
+                  <div style="padding:18px 16px 0;display:flex;align-items:center;gap:9px;">
+                    <span style="display:inline-flex;align-items:center;gap:7px;background:rgba(64,196,241,.16);border:1px solid rgba(64,196,241,.32);border-radius:999px;padding:6px 11px;font:700 11.5px Inter,sans-serif;color:#9FE3F7;"><span style="width:7px;height:7px;border-radius:50%;background:#40C4F1;animation:ppDot 1.4s ease-in-out infinite;"></span>Ouvindo…</span>
+                  </div>
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 20px;">
+                    <div style="position:relative;width:128px;height:128px;display:flex;align-items:center;justify-content:center;">
+                      <span style="position:absolute;inset:0;border-radius:50%;border:2px solid rgba(64,196,241,.35);animation:ppFloat 3.4s ease-in-out infinite;"></span>
+                      <span style="position:absolute;inset:16px;border-radius:50%;border:2px solid rgba(64,196,241,.55);"></span>
+                      <span style="width:78px;height:78px;border-radius:50%;background:#40C4F1;display:flex;align-items:center;justify-content:center;box-shadow:0 16px 40px -10px rgba(64,196,241,.6);"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#0E1516" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v4"></path></svg></span>
+                    </div>
+                    <div style="display:flex;align-items:flex-end;gap:4px;height:30px;margin-top:22px;">
+                      <span style="width:4px;background:#40C4F1;border-radius:3px;animation:ppWave 1s ease-in-out infinite;"></span>
+                      <span style="width:4px;background:#40C4F1;border-radius:3px;animation:ppWave 1s ease-in-out .12s infinite;"></span>
+                      <span style="width:4px;background:#40C4F1;border-radius:3px;animation:ppWave 1s ease-in-out .24s infinite;"></span>
+                      <span style="width:4px;background:#40C4F1;border-radius:3px;animation:ppWave 1s ease-in-out .36s infinite;"></span>
+                      <span style="width:4px;background:#40C4F1;border-radius:3px;animation:ppWave 1s ease-in-out .48s infinite;"></span>
+                      <span style="width:4px;background:#40C4F1;border-radius:3px;animation:ppWave 1s ease-in-out .6s infinite;"></span>
+                      <span style="width:4px;background:#40C4F1;border-radius:3px;animation:ppWave 1s ease-in-out .72s infinite;"></span>
+                    </div>
+                    <p style="font:700 16px Inter,sans-serif;color:#fff;text-align:center;margin:22px 0 0;line-height:1.35;">“PingPlay, aumentar a<br>audiodescrição.”</p>
+                  </div>
+                  <div style="padding:0 16px 20px;display:flex;flex-direction:column;gap:8px;">
+                    <div style="display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:11px;padding:11px 13px;font:600 13px Inter,sans-serif;color:#D7D0E6;"><span style="width:6px;height:6px;border-radius:50%;background:#40C4F1;flex:none;"></span>“Pausar o filme”</div>
+                    <div style="display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:11px;padding:11px 13px;font:600 13px Inter,sans-serif;color:#D7D0E6;"><span style="width:6px;height:6px;border-radius:50%;background:#40C4F1;flex:none;"></span>“Repetir a última cena”</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="diff-text">
+            <span class="badge badge-azul">02 · Comando de voz</span>
+            <h3>É só pedir. Em voz alta.</h3>
+            <p>Para quem não enxerga, navegar por menus é uma barreira. No PingPlay, a pessoa cega controla tudo falando — sem depender da tela.</p>
+            <ul class="feature-list">
+              <li><span class="mk" aria-hidden="true"><span></span></span>Navegação 100% por voz, sem precisar olhar.</li>
+              <li><span class="mk" aria-hidden="true"><span></span></span>Audiodescrição sob comando: aumentar, pausar, repetir.</li>
+              <li><span class="mk" aria-hidden="true"><span></span></span>Autonomia total — a pessoa assiste sozinha, do seu jeito.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ #QueroNoPingPlay ═══ -->
+    <section id="pedir" class="pedir section" aria-labelledby="pedir-h2">
+      <div class="container">
+        <div class="section-intro">
+          <span class="eyebrow">O movimento da comunidade</span>
+          <h2 id="pedir-h2">#QueroNoPingPlay</h2>
+          <p>Peça o filme que você quer assistir com acessibilidade de verdade — aqui no site e nas redes sociais. Quando a comunidade pede, o mercado escuta.</p>
+        </div>
+
+        <div class="pedir-grid">
+          <form id="form-pedir" class="card-white" novalidate aria-labelledby="pedir-form-h">
+            <h3 id="pedir-form-h" class="sr-only">Pedir um filme para o PingPlay</h3>
+            <label for="pp-movie" class="flabel-lg">Qual filme você quer ver acessível?</label>
+            <input id="pp-movie" class="input-lg" type="text" placeholder="Ex.: Avatar 4, Superman, Demon Slayer…" autocomplete="off">
+            <div class="field-row c-1-1">
+              <div class="field">
+                <label for="pp-cidade" class="flabel">Cidade</label>
+                <input id="pp-cidade" class="input" type="text" placeholder="Sua cidade" autocomplete="address-level2">
+              </div>
+              <div class="field">
+                <label for="pp-email" class="flabel">E-mail</label>
+                <input id="pp-email" class="input" type="email" placeholder="voce@email.com" autocomplete="email">
+              </div>
+            </div>
+            <div class="field">
+              <label for="pp-perfil" class="flabel">Você é</label>
+              <select id="pp-perfil" class="select">
+                <option>Pessoa surda</option>
+                <option>Pessoa cega</option>
+                <option>Familiar / acompanhante</option>
+                <option>Educador(a)</option>
+                <option>Apoiador(a)</option>
+                <option>Profissional do mercado audiovisual</option>
+              </select>
+            </div>
+            <label class="checkline">
+              <input id="pp-notify" type="checkbox" checked>
+              <span>Quero ser avisado quando o filme estiver disponível no PingPlay.</span>
+            </label>
+            <p class="field-error" id="pp-error" role="alert" hidden></p>
+            <button type="submit" class="btn btn-primary btn-full" style="margin-top:20px;">Quero este filme no PingPlay</button>
+            <p class="form-note">Cada pedido vira dado real de demanda.<br>A comunidade escolhe, o PingPlay leva ao mercado.</p>
+          </form>
+
+          <section class="ranking" aria-labelledby="ranking-h" aria-describedby="ranking-sub">
+            <div class="ranking-head">
+              <h3 id="ranking-h">Filmes mais pedidos pela comunidade</h3>
+              <span class="ranking-counter"><span class="live" aria-hidden="true"></span><span id="ranking-total">0</span> pedidos</span>
+            </div>
+            <p class="ranking-sub" id="ranking-sub">Atualiza ao vivo conforme a comunidade pede. Clique em pedir e veja o ranking se mexer.</p>
+            <div class="ranking-list" id="ranking-list" aria-live="polite"></div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ TESTAR NOS CINEMAS ═══ -->
+    <section id="testar" class="testar section" aria-labelledby="testar-h2">
+      <div class="container grid">
+        <div>
+          <span class="eyebrow">Experiência presencial</span>
+          <h2 id="testar-h2">Quero testar a experiência</h2>
+          <p class="lead">Entre na lista para experimentar o PingPlay em sessões abertas de demonstração — em cinemas parceiros, eventos e ações com a comunidade.</p>
+          <ul class="feature-list">
+            <li><span class="mk" aria-hidden="true"><span></span></span>Você diz em qual cinema ou região gostaria de testar.</li>
+            <li><span class="mk" aria-hidden="true"><span></span></span>Priorizamos os cinemas com mais gente na fila.</li>
+            <li><span class="mk" aria-hidden="true"><span></span></span>As unidades são da ETC Filmes — sessões guiadas, sem custo.</li>
+          </ul>
+          <img class="side-img" src="/assets/testar.jpg" alt="Sessão de cinema acessível — pessoa usando os óculos PingPlay, tela com legenda e janela de Libras">
+        </div>
+
+        <div class="card-form-white">
+          <form id="form-testar" novalidate>
+            <h3>Lista de espera para teste</h3>
+            <div class="field">
+              <label for="t-nome" class="flabel">Nome</label>
+              <input id="t-nome" class="input" type="text" placeholder="Seu nome" autocomplete="name">
+            </div>
+            <div class="field">
+              <label for="t-email" class="flabel">E-mail</label>
+              <input id="t-email" class="input" type="email" placeholder="voce@email.com" autocomplete="email">
+            </div>
+            <div class="field-row c-2fr1">
+              <div class="field">
+                <label for="t-cidade" class="flabel">Cidade</label>
+                <input id="t-cidade" class="input" type="text" placeholder="Cidade" autocomplete="address-level2">
+              </div>
+              <div class="field">
+                <label for="t-uf" class="flabel">UF</label>
+                <input id="t-uf" class="input uf" type="text" placeholder="SP" maxlength="2" autocomplete="address-level1">
+              </div>
+            </div>
+            <div class="field">
+              <label for="t-cinema" class="flabel">Em qual cinema você gostaria de testar?</label>
+              <input id="t-cinema" class="input" type="text" placeholder="Nome do cinema ou shopping">
+            </div>
+            <p class="field-error" id="t-error" role="alert" hidden></p>
+            <button type="submit" class="btn btn-primary btn-full" style="margin-top:20px;">Entrar na lista de teste</button>
+          </form>
+          <div class="form-success" id="t-success" role="status" tabindex="-1" hidden>
+            <div class="puff" style="background:var(--accent);" aria-hidden="true"><span></span><span style="animation-delay:.2s;"></span><span style="animation-delay:.4s;"></span></div>
+            <h3>Você está na lista de teste!</h3>
+            <p>Avisaremos assim que uma sessão de demonstração for confirmada perto de você.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ LISTA DE DESEJO ═══ -->
+    <section id="comprar" class="comprar section" aria-labelledby="comprar-h2">
+      <div class="glow" aria-hidden="true"></div>
+      <div class="container grid">
+        <div>
+          <span class="eyebrow">Os óculos PingPlay</span>
+          <h2 id="comprar-h2">Quero ter os meus óculos</h2>
+          <p class="lead">Estamos estruturando uma parceria estratégica para viabilizar o produto em escala, com uma versão mais adaptada e acessível em preço para a comunidade.</p>
+          <p class="lead-2">Nosso objetivo não é vender hardware, mas tornar essa experiência possível para o maior número de pessoas. Entre na lista e seja avisado em primeira mão.</p>
+          <img class="side-img" src="/assets/oculos.jpg" alt="Os óculos PingPlay — close elegante do produto sobre fundo escuro">
+        </div>
+
+        <div class="card-form-white">
+          <form id="form-comprar" novalidate>
+            <h3>Lista de desejo</h3>
+            <div class="field">
+              <label for="b-nome" class="flabel">Nome</label>
+              <input id="b-nome" class="input" type="text" placeholder="Seu nome" autocomplete="name">
+            </div>
+            <div class="field">
+              <label for="b-email" class="flabel">E-mail</label>
+              <input id="b-email" class="input" type="email" placeholder="voce@email.com" autocomplete="email">
+            </div>
+            <div class="field-row c-2fr1">
+              <div class="field">
+                <label for="b-cidade" class="flabel">Cidade</label>
+                <input id="b-cidade" class="input" type="text" placeholder="Cidade" autocomplete="address-level2">
+              </div>
+              <div class="field">
+                <label for="b-uf" class="flabel">UF</label>
+                <input id="b-uf" class="input uf" type="text" placeholder="SP" maxlength="2" autocomplete="address-level1">
+              </div>
+            </div>
+            <p class="field-error" id="b-error" role="alert" hidden></p>
+            <button type="submit" class="btn btn-roxo btn-full" style="margin-top:20px;">Entrar na lista de desejo</button>
+            <p class="form-note">Sem compromisso. Você só está dizendo que tem interesse.</p>
+          </form>
+          <div class="form-success" id="b-success" role="status" tabindex="-1" hidden>
+            <div class="puff" style="background:var(--roxo);" aria-hidden="true"><span></span><span style="animation-delay:.2s;"></span><span style="animation-delay:.4s;"></span></div>
+            <h3>Você está na lista!</h3>
+            <p>Você será um dos primeiros a saber quando os óculos PingPlay estiverem disponíveis.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ DECLARAÇÃO DE ACESSIBILIDADE ═══ -->
+    <section id="acessibilidade" class="section" style="background:#fff;" aria-labelledby="a11y-h2">
+      <div class="container" style="max-width:820px;">
+        <span class="eyebrow" style="color:var(--roxo);">Compromisso</span>
+        <h2 id="a11y-h2" style="font-weight:800;font-size:clamp(26px,3.6vw,40px);color:var(--ink);margin:12px 0 16px;letter-spacing:-.02em;">Declaração de acessibilidade</h2>
+        <p style="font-size:17px;line-height:1.6;color:var(--body-2);margin:0 0 14px;">A PingPlay é uma plataforma de acessibilidade — e este site pratica o que defende. Ele foi construído seguindo as diretrizes <strong>WCAG 2.2 nível AA</strong> e a norma brasileira <strong>ABNT NBR 17225</strong>, pensando especialmente em pessoas cegas, surdas e com surdocegueira.</p>
+        <ul style="font-size:16.5px;line-height:1.6;color:var(--body-2);margin:0 0 14px;padding-left:20px;">
+          <li>Navegação completa por teclado, com foco sempre visível.</li>
+          <li>Estrutura semântica e rótulos para leitores de tela (NVDA, VoiceOver, TalkBack).</li>
+          <li>Ajuste de tamanho do texto, quatro modos de contraste e tradução em Libras (VLibras).</li>
+          <li>Respeito à preferência de movimento reduzido do sistema.</li>
+          <li>Alvos de toque de no mínimo 44 pixels e alto contraste de cores.</li>
+        </ul>
+        <p style="font-size:16.5px;line-height:1.6;color:var(--body-2);margin:0;">Encontrou alguma barreira? Escreva para <a href="mailto:contato@etcfilmes.com.br" style="color:var(--roxo);font-weight:600;">contato@etcfilmes.com.br</a> e vamos corrigir.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <img src="/assets/pingplay-logo-white.png" alt="PingPlay">
+          <p class="tag">PingPlay transforma acessibilidade em experiência.</p>
+          <p class="sub">A melhor experiência de acessibilidade audiovisual do Brasil.</p>
+        </div>
+        <nav class="footer-nav" aria-label="Participe">
+          <span class="ttl">Participe</span>
+          <a href="#pedir"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>#QueroNoPingPlay</a>
+          <a href="#testar"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="15" r="4"></circle><circle cx="18" cy="15" r="4"></circle><path d="M14 15a2 2 0 0 0-2-2 2 2 0 0 0-2 2"></path><path d="M2.5 13 5 7c.7-1.3 1.4-2 3-2"></path><path d="M21.5 13 19 7c-.7-1.3-1.5-2-3-2"></path></svg>Testar nos cinemas</a>
+          <a href="#comprar"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"></rect><path d="M12 8v13"></path><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"></path></svg>Lista de desejo</a>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <span>Uma iniciativa ETC Filmes · Acessibilidade audiovisual de verdade.</span>
+        <span>Feito com foco em contraste, legibilidade e navegação por teclado.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden>
+    <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
+    <span class="msg" id="toast-msg"></span>
+  </div>
+
+  <!-- Formulários ocultos p/ o Netlify Forms detectar (backup de captação) -->
+  <form name="pedir-filme" data-netlify="true" netlify-honeypot="bot-field" hidden>
+    <input type="text" name="filme"><input type="text" name="cidade"><input type="email" name="email"><input type="text" name="perfil"><input type="text" name="bot-field">
+  </form>
+  <form name="testar-cinema" data-netlify="true" netlify-honeypot="bot-field" hidden>
+    <input type="text" name="nome"><input type="email" name="email"><input type="text" name="cidade"><input type="text" name="uf"><input type="text" name="cinema"><input type="text" name="bot-field">
+  </form>
+  <form name="lista-desejo" data-netlify="true" netlify-honeypot="bot-field" hidden>
+    <input type="text" name="nome"><input type="email" name="email"><input type="text" name="cidade"><input type="text" name="uf"><input type="text" name="bot-field">
+  </form>
+
+  <!-- VLibras (widget oficial do Governo Federal) -->
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div>
+  </div>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>new window.VLibras.Widget('https://vlibras.gov.br/app');</script>
+
+  <script src="/js/config.js"></script>
+  <script src="/js/supabase.js"></script>
+  <script src="/js/a11y.js"></script>
+  <script src="/js/landing.js"></script>
+</body>
+</html>
