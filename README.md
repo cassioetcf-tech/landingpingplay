@@ -39,13 +39,16 @@ supabase-migration.sql     ← rodar UMA vez no SQL Editor do Supabase
 ## Colocar no ar (checklist)
 
 ### 1. Supabase (backend dos formulários e do ranking)
-1. Crie/abra o projeto Supabase **dedicado do PingPlay**.
-2. No **SQL Editor**, cole e rode `supabase-migration.sql` (cria tabelas, RLS,
-   seed do ranking e as RPCs de votação).
-3. Em **Project Settings → API**, copie a **Project URL** e a **anon/publishable key**.
-4. Cole os dois valores em `js/config.js` (`SUPA_URL` e `SUPA_KEY`) e faça commit.
-   > Enquanto os placeholders não forem trocados, o site funciona em modo demo:
-   > ranking com dados-semente e formulários caindo só no Netlify Forms.
+Reaproveita o projeto do **Acesso na Tela** (`gpwmmvaetokgrzekepbk`); `js/config.js`
+já aponta para ele. Tabelas namespaced `pingplay_*` (não mexem em nada do Acesso
+na Tela e **não** ligam na `newsletter`, para não disparar o e-mail de boas-vindas
+de lá).
+1. Abra o projeto Supabase do Acesso na Tela.
+2. No **SQL Editor**, cole e rode `supabase-migration.sql` (cria tabelas `pingplay_*`,
+   RLS, seed do ranking e as RPCs de votação). Pronto — ranking e formulários ficam
+   live automaticamente.
+   > Antes de rodar o SQL, o site funciona em modo demo: ranking com dados-semente
+   > e formulários caindo só no Netlify Forms.
 
 ### 2. GitHub → Netlify (deploy contínuo)
 1. Crie um repositório no GitHub (ex.: `cassioetcf-tech/landingpingplay`).

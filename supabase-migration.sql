@@ -1,8 +1,12 @@
 -- ═══════════════════════════════════════════════════════════════════════════
--- PingPlay — Migração Supabase (rodar UMA vez no SQL Editor do projeto DEDICADO)
+-- PingPlay — Migração Supabase (rodar UMA vez no SQL Editor)
+-- Projeto: reaproveita o Supabase do Acesso na Tela (gpwmmvaetokgrzekepbk).
+-- Tabelas namespaced com prefixo pingplay_ para não colidir com nada de lá.
+-- NÃO liga na tabela `newsletter` de propósito (evita disparar o e-mail de
+-- boas-vindas do Acesso na Tela para leads do PingPlay).
 -- Cria: ranking de filmes (#QueroNoPingPlay), pedidos individuais e leads
 -- (Testar / Lista de desejo). RLS + RPCs SECURITY DEFINER para votação segura.
--- Depois de rodar, preencha js/config.js com a URL e a anon key deste projeto.
+-- js/config.js já aponta para este projeto — nada a preencher depois de rodar.
 -- ═══════════════════════════════════════════════════════════════════════════
 
 create extension if not exists pgcrypto;

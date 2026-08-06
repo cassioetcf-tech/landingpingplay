@@ -1,18 +1,19 @@
 // ── CONFIG — PingPlay Landing ────────────────────────────────────────────────
-// Projeto Supabase DEDICADO do PingPlay (separado do Acesso na Tela).
+// Reaproveita o projeto Supabase do Acesso na Tela (mesma URL + anon key).
+// As tabelas do PingPlay são namespaced com prefixo `pingplay_` para não
+// colidir com nada do Acesso na Tela (ver supabase-migration.sql).
 //
-// >>> PREENCHER com a URL e a anon/publishable key do projeto Supabase do PingPlay.
-//     Supabase → Project Settings → API → Project URL e a "anon public" (ou
-//     "publishable") key. São chaves de baixo risco, podem ficar no repositório
-//     (a segurança real vem do RLS + RPCs SECURITY DEFINER — ver supabase-migration.sql).
+// A anon/publishable key é de baixo risco e já pública no repositório do
+// Acesso na Tela. A segurança real vem do RLS + RPCs SECURITY DEFINER.
 //
-// Enquanto os valores forem os placeholders abaixo, o site funciona visualmente,
-// o ranking usa os dados-semente locais e os formulários caem no fallback do
-// Netlify Forms — nada quebra.
+// Rode `supabase-migration.sql` no SQL Editor DESTE projeto (gpwmmvaetokgrzekepbk)
+// para criar as tabelas pingplay_* e as RPCs de votação. Enquanto elas não
+// existirem, o site roda em modo demo (ranking com dados-semente; formulários
+// caem só no Netlify Forms) — nada quebra.
 var CONFIG = {
-  SUPA_URL: 'https://SEU-PROJETO.supabase.co',
-  SUPA_KEY: 'COLE_AQUI_A_ANON_KEY',
+  SUPA_URL: 'https://gpwmmvaetokgrzekepbk.supabase.co',
+  SUPA_KEY: 'sb_publishable_lbKSyHwh8nNINEef-0Hi5Q_oPF5qt-P',
 };
 
-// true quando as chaves ainda são placeholders (evita chamadas que dariam erro).
+// true quando as chaves são reais (não placeholders).
 CONFIG.SUPA_READY = !/SEU-PROJETO|COLE_AQUI/.test(CONFIG.SUPA_URL + CONFIG.SUPA_KEY);
