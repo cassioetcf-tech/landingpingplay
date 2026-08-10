@@ -1,114 +1,113 @@
 -- ═══════════════════════════════════════════════════════════════════════════
--- PingPlay — Migração Supabase (rodar UMA vez no SQL Editor)
+-- PingPlay v2 — Migração Supabase (rodar UMA vez no SQL Editor)
 -- Projeto: reaproveita o Supabase do Acesso na Tela (gpwmmvaetokgrzekepbk).
--- Tabelas namespaced com prefixo pingplay_ para não colidir com nada de lá.
--- NÃO liga na tabela `newsletter` de propósito (evita disparar o e-mail de
--- boas-vindas do Acesso na Tela para leads do PingPlay).
--- Cria: ranking de filmes (#QueroNoPingPlay), pedidos individuais e leads
--- (Testar / Lista de desejo). RLS + RPCs SECURITY DEFINER para votação segura.
--- js/config.js já aponta para este projeto — nada a preencher depois de rodar.
+--
+-- Modelo v2 (base qualificada de leads):
+--   • pingplay_cadastros  — 1 linha por pessoa (chave = e-mail), com interesses e LGPD
+--   • pingplay_indicacoes — filmes indicados por pessoa, com dedup (email+filme)
+--   • ranking = nº de PESSOAS distintas por filme (não cliques)
+-- PII protegida: cadastros/indicações NÃO têm leitura pública; escrita só via RPC.
+-- Ao final, remove as tabelas/RPCs da v1 (eram de demonstração).
 -- ═══════════════════════════════════════════════════════════════════════════
 
 create extension if not exists pgcrypto;
 
--- Normalização de título (imutável, usada em coluna gerada e nas RPCs)
 create or replace function pingplay_norm(t text) returns text
 language sql immutable as $$
   select lower(btrim(regexp_replace(coalesce(t, ''), '\s+', ' ', 'g')))
 $$;
 
--- ── Ranking de filmes ──
-create table if not exists pingplay_movies (
-  id         text primary key,
-  title      text not null,
-  title_norm text generated always as (pingplay_norm(title)) stored,
-  votes      integer not null default 0,
-  is_new     boolean not null default false,
-  created_at timestamptz not null default now()
+-- ── Base única de cadastros (1 linha por pessoa) ──
+create table if not exists pingplay_cadastros (
+  id           uuid primary key default gen_random_uuid(),
+  nome         text not null,
+  email        text not null unique,
+  telefone     text,
+  cidade       text,
+  perfil       text,
+  quer_testar  boolean not null default false,
+  quer_oculos  boolean not null default false,
+  quer_indicar boolean not null default false,
+  lgpd         boolean not null default false,
+  lgpd_at      timestamptz,
+  origem       text default 'landing',
+  created_at   timestamptz not null default now(),
+  updated_at   timestamptz not null default now()
 );
-create unique index if not exists pingplay_movies_norm_uk on pingplay_movies (title_norm);
 
--- ── Pedidos individuais (form #QueroNoPingPlay) ──
-create table if not exists pingplay_requests (
+-- ── Indicações de filmes (dedup por pessoa + filme) ──
+create table if not exists pingplay_indicacoes (
   id         uuid primary key default gen_random_uuid(),
+  email      text not null,
+  email_norm text generated always as (lower(btrim(email))) stored,
   filme      text not null,
-  cidade     text,
-  email      text,
-  perfil     text,
-  quer_aviso boolean default true,
+  filme_norm text generated always as (pingplay_norm(filme)) stored,
   created_at timestamptz not null default now()
 );
+create unique index if not exists pingplay_indic_uk on pingplay_indicacoes (email_norm, filme_norm);
 
--- ── Leads (Testar nos cinemas + Lista de desejo) ──
-create table if not exists pingplay_leads (
-  id         uuid primary key default gen_random_uuid(),
-  tipo       text not null check (tipo in ('teste', 'desejo')),
-  nome       text,
-  email      text,
-  cidade     text,
-  uf         text,
-  cinema     text,
-  created_at timestamptz not null default now()
-);
+alter table pingplay_cadastros   enable row level security;
+alter table pingplay_indicacoes  enable row level security;
+-- Sem policies públicas de select/insert: escrita só via RPC SECURITY DEFINER (PII protegida).
 
--- ── Semente do ranking (números fictícios de demonstração; troque quando quiser) ──
-insert into pingplay_movies (id, title, votes) values
-  ('avatar',     'Avatar 4',       2847),
-  ('vingadores', 'Vingadores',     2613),
-  ('superman',   'Superman',       2390),
-  ('aranha',     'Homem-Aranha',   2104),
-  ('demon',      'Demon Slayer',   1958),
-  ('jurassic',   'Jurassic World', 1622),
-  ('toystory',   'Toy Story 6',    1487),
-  ('moana',      'Moana',          1290),
-  ('frozen',     'Frozen 3',       1175),
-  ('minecraft',  'Minecraft',       980)
-on conflict (id) do nothing;
-
--- ── RLS ──
-alter table pingplay_movies   enable row level security;
-alter table pingplay_requests enable row level security;
-alter table pingplay_leads    enable row level security;
-
--- Ranking: leitura pública; escrita só via RPC (security definer)
-drop policy if exists pingplay_movies_read on pingplay_movies;
-create policy pingplay_movies_read on pingplay_movies for select using (true);
-
--- Pedidos e leads: inserção pública, SEM leitura pública (protege PII)
-drop policy if exists pingplay_requests_insert on pingplay_requests;
-create policy pingplay_requests_insert on pingplay_requests for insert with check (true);
-drop policy if exists pingplay_leads_insert on pingplay_leads;
-create policy pingplay_leads_insert on pingplay_leads for insert with check (true);
-
-grant select on pingplay_movies to anon, authenticated;
-grant insert on pingplay_requests, pingplay_leads to anon, authenticated;
-
--- ── RPC: votar por título (cria o filme se não existir) ──
-create or replace function pingplay_vote_title(p_title text)
-returns setof pingplay_movies
-language plpgsql security definer set search_path = public as $$
-declare v_norm text; v_id text;
-begin
-  v_norm := pingplay_norm(p_title);
-  if v_norm = '' then raise exception 'titulo vazio'; end if;
-  update pingplay_movies set votes = votes + 1 where title_norm = v_norm;
-  if not found then
-    v_id := 'm' || floor(extract(epoch from clock_timestamp()) * 1000)::bigint::text;
-    insert into pingplay_movies (id, title, votes, is_new)
-    values (v_id, btrim(p_title), 1, true)
-    on conflict (title_norm) do update set votes = pingplay_movies.votes + 1;
-  end if;
-  return query select * from pingplay_movies order by votes desc, title asc;
-end $$;
-
--- ── RPC: votar por id (botão "+ Quero") ──
-create or replace function pingplay_vote_id(p_id text)
-returns setof pingplay_movies
+-- ── RPC: cadastro (upsert por e-mail; merge — nunca rebaixa interesse/LGPD) ──
+create or replace function pingplay_upsert_cadastro(
+  p_nome text, p_email text, p_telefone text, p_cidade text, p_perfil text,
+  p_quer_testar boolean, p_quer_oculos boolean, p_quer_indicar boolean, p_lgpd boolean
+) returns void
 language plpgsql security definer set search_path = public as $$
 begin
-  update pingplay_movies set votes = votes + 1 where id = p_id;
-  return query select * from pingplay_movies order by votes desc, title asc;
+  if p_email is null or btrim(p_email) = '' then raise exception 'email obrigatorio'; end if;
+  insert into pingplay_cadastros (nome, email, telefone, cidade, perfil,
+                                  quer_testar, quer_oculos, quer_indicar, lgpd, lgpd_at)
+  values (btrim(p_nome), lower(btrim(p_email)), nullif(btrim(p_telefone), ''),
+          nullif(btrim(p_cidade), ''), nullif(btrim(p_perfil), ''),
+          coalesce(p_quer_testar, false), coalesce(p_quer_oculos, false),
+          coalesce(p_quer_indicar, false), coalesce(p_lgpd, false),
+          case when p_lgpd then now() else null end)
+  on conflict (email) do update set
+    nome         = coalesce(nullif(btrim(excluded.nome), ''), pingplay_cadastros.nome),
+    telefone     = coalesce(excluded.telefone, pingplay_cadastros.telefone),
+    cidade       = coalesce(excluded.cidade, pingplay_cadastros.cidade),
+    perfil       = coalesce(excluded.perfil, pingplay_cadastros.perfil),
+    quer_testar  = pingplay_cadastros.quer_testar  or excluded.quer_testar,
+    quer_oculos  = pingplay_cadastros.quer_oculos  or excluded.quer_oculos,
+    quer_indicar = pingplay_cadastros.quer_indicar or excluded.quer_indicar,
+    lgpd         = pingplay_cadastros.lgpd or excluded.lgpd,
+    lgpd_at      = coalesce(pingplay_cadastros.lgpd_at, excluded.lgpd_at),
+    updated_at   = now();
 end $$;
 
-grant execute on function pingplay_vote_title(text) to anon, authenticated;
-grant execute on function pingplay_vote_id(text)    to anon, authenticated;
+-- ── RPC: indicar filme (dedup por pessoa+filme) ──
+create or replace function pingplay_indicar(p_email text, p_filme text)
+returns void
+language plpgsql security definer set search_path = public as $$
+begin
+  if p_email is null or btrim(p_email) = '' then raise exception 'email obrigatorio'; end if;
+  if pingplay_norm(p_filme) = '' then raise exception 'filme vazio'; end if;
+  insert into pingplay_indicacoes (email, filme)
+  values (lower(btrim(p_email)), btrim(p_filme))
+  on conflict (email_norm, filme_norm) do nothing;
+end $$;
+
+-- ── RPC: ranking agregado (SEM PII — só filme + nº de pessoas) ──
+create or replace function pingplay_ranking(p_limit int default 10)
+returns table(filme text, pessoas bigint)
+language sql security definer set search_path = public as $$
+  select max(filme) as filme, count(distinct email_norm) as pessoas
+  from pingplay_indicacoes
+  group by filme_norm
+  order by pessoas desc, 1 asc
+  limit greatest(1, coalesce(p_limit, 10));
+$$;
+
+grant execute on function pingplay_upsert_cadastro(text,text,text,text,text,boolean,boolean,boolean,boolean) to anon, authenticated;
+grant execute on function pingplay_indicar(text,text) to anon, authenticated;
+grant execute on function pingplay_ranking(int)        to anon, authenticated;
+
+-- ── Limpeza da v1 (eram tabelas/RPCs de demonstração) ──
+drop function if exists pingplay_vote_title(text);
+drop function if exists pingplay_vote_id(text);
+drop table if exists pingplay_movies;
+drop table if exists pingplay_requests;
+drop table if exists pingplay_leads;

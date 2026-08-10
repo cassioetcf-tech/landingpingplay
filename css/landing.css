@@ -223,6 +223,36 @@
 .toast .dots span { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: ppDot 1.4s ease-in-out infinite; }
 .toast .msg { font: 600 15px 'Inter', sans-serif; }
 
+/* ═══ CADASTRO ÚNICO ═══ */
+.cadastro { background: #fff; }
+.cadastro .section-intro { max-width: 44rem; margin-bottom: 34px; }
+.cadastro .section-intro .eyebrow { color: var(--roxo); }
+.cadastro .section-intro h2 { color: var(--ink); }
+.cadastro .section-intro p { color: var(--body-2); }
+.cad-form { max-width: 760px; margin: 0 auto; }
+.cad-req-note { margin: 0 0 16px; font-size: 13.5px; color: var(--muted); }
+.cad-req-note span, .req { color: #B42318; font-weight: 700; }
+.opt { color: var(--muted); font-weight: 500; font-size: .92em; }
+.cad-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; }
+.cad-col-full { grid-column: 1 / -1; }
+.cad-fieldset { border: none; padding: 0; margin: 20px 0 0; min-width: 0; }
+.cad-fieldset legend { font: 700 15px 'Inter', sans-serif; color: var(--ink); padding: 0; margin: 0 0 10px; }
+.cad-fieldset .checkline { margin-top: 0; margin-bottom: 10px; }
+.cad-form .field + .cad-fieldset, .cad-form .cad-grid + .cad-fieldset { margin-top: 20px; }
+.cad-form > .field { margin-top: 16px; }
+.cad-lgpd { margin-top: 18px; align-items: flex-start; }
+.lgpd-note { margin: 8px 0 0; font-size: 13px; line-height: 1.5; color: var(--muted); }
+.lgpd-note, .cad-lgpd a { }
+.cad-lgpd a { color: var(--roxo); font-weight: 600; }
+.cad-success { max-width: 760px; margin: 0 auto; }
+
+/* Estados de validação */
+.input.invalid, .select.invalid { border-color: #B42318; box-shadow: 0 0 0 3px rgba(180,35,24,.12); }
+.checkline.invalid { outline: 2px solid #B42318; outline-offset: 4px; border-radius: 6px; }
+
+/* Estado vazio do ranking */
+.ranking-empty { padding: 28px 14px; text-align: center; color: var(--muted); font-size: 15px; line-height: 1.5; border: 1px dashed #D2E6EC; border-radius: 14px; background: #F7FAFB; }
+
 /* ═══ RESPONSIVO ═══ */
 @media (max-width: 860px) {
   .diff-1, .diff-2 { grid-template-columns: 1fr; }
@@ -240,5 +270,6 @@
   .main-nav a span.lbl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
   .main-nav a { padding: 10px; }
   .field-row.c-2fr1, .field-row.c-1-1 { grid-template-columns: 1fr; }
+  .cad-grid { grid-template-columns: 1fr; }
   .footer-bottom { flex-direction: column; align-items: flex-start; }
 }

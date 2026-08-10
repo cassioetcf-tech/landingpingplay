@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Política de Privacidade — PingPlay</title>
+  <meta name="description" content="Como o PingPlay coleta, usa e protege os seus dados pessoais, conforme a LGPD.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png">
+  <meta name="theme-color" content="#583192">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/landing.css">
+  <style>
+    .doc { max-width: 780px; margin: 0 auto; padding: clamp(40px,6vw,72px) var(--pad-x); }
+    .doc h1 { font-weight: 800; font-size: clamp(28px,4vw,44px); color: var(--ink); letter-spacing: -.02em; margin: 10px 0 6px; }
+    .doc .upd { color: var(--muted); font-size: 14px; margin: 0 0 28px; }
+    .doc h2 { font-weight: 800; font-size: clamp(19px,2.2vw,24px); color: var(--ink); margin: 30px 0 10px; letter-spacing: -.01em; }
+    .doc p, .doc li { font-size: 16.5px; line-height: 1.65; color: var(--body-2); }
+    .doc ul { padding-left: 20px; margin: 0 0 12px; }
+    .doc li { margin-bottom: 6px; }
+    .doc a { color: var(--roxo); font-weight: 600; }
+    .doc .ph { background: #FFF3D6; padding: 0 4px; border-radius: 4px; color: #6A4A00; font-weight: 600; }
+    .doc .back { display: inline-flex; align-items: center; gap: 8px; margin-top: 34px; font-weight: 700; color: var(--roxo); text-decoration: none; }
+    .doc .back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Pular para o conteúdo</a>
+  <div class="sr-only" id="a11y-live" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="a11y-bar" role="toolbar" aria-label="Ferramentas de acessibilidade">
+    <div class="a11y-skip-links">
+      <a class="a11y-skip-btn" href="#main-content">Ir para o conteúdo</a>
+      <a class="a11y-skip-btn" href="index.html">Voltar ao início</a>
+    </div>
+    <div class="a11y-controls">
+      <span class="a11y-label">Tamanho do texto:</span>
+      <button class="a11y-btn" type="button" onclick="changeFontSize('increase')" aria-label="Aumentar tamanho da fonte">A+</button>
+      <button class="a11y-btn" type="button" onclick="changeFontSize('decrease')" aria-label="Diminuir tamanho da fonte">A-</button>
+      <div class="a11y-contrast-wrap">
+        <button class="a11y-contrast-btn" type="button" onclick="toggleContrastMenu(this)" aria-expanded="false" aria-controls="contrast-menu" aria-label="Opções de contraste">&#9680; Contraste</button>
+        <div id="contrast-menu" class="a11y-contrast-menu" hidden role="menu" aria-label="Modos de contraste">
+          <div class="a11y-contrast-menu-title" aria-hidden="true">Modo de contraste</div>
+          <button role="menuitemradio" aria-checked="true"  data-contrast="default"   onclick="setContrast('default')"><span class="cm-check" aria-hidden="true">✓</span>Normal</button>
+          <button role="menuitemradio" aria-checked="false" data-contrast="high"      onclick="setContrast('high')"><span class="cm-check" aria-hidden="true">✓</span>Alto contraste</button>
+          <button role="menuitemradio" aria-checked="false" data-contrast="inverted"  onclick="setContrast('inverted')"><span class="cm-check" aria-hidden="true">✓</span>Invertido</button>
+          <button role="menuitemradio" aria-checked="false" data-contrast="grayscale" onclick="setContrast('grayscale')"><span class="cm-check" aria-hidden="true">✓</span>Escala de cinza</button>
+        </div>
+      </div>
+      <button class="a11y-btn" type="button" onclick="toggleVLibras()" aria-label="Ativar tradução em Libras (VLibras)">&#9995; Libras</button>
+    </div>
+  </div>
+
+  <header class="site-header" role="banner">
+    <div class="container inner">
+      <a href="index.html" class="brand" aria-label="PingPlay — início"><img src="/assets/pingplay-logo.png" alt="PingPlay"></a>
+      <nav class="main-nav" aria-label="Menu principal"><a href="index.html">Voltar ao início</a></nav>
+    </div>
+  </header>
+
+  <main id="main-content" tabindex="-1">
+    <article class="doc">
+      <span class="eyebrow" style="color:var(--roxo);">Privacidade</span>
+      <h1>Política de Privacidade — PingPlay</h1>
+      <p class="upd">Última atualização: <span class="ph">〔data〕</span></p>
+
+      <h2>1. Quem é o responsável pelos dados</h2>
+      <p>O PingPlay é uma iniciativa da <span class="ph">〔ETC Filmes — razão social〕</span>, inscrita no CNPJ <span class="ph">〔nº〕</span>, com sede em <span class="ph">〔endereço〕</span>. Somos o controlador dos dados pessoais coletados nesta página.</p>
+
+      <h2>2. Quais dados coletamos</h2>
+      <p>Coletamos apenas os dados que você nos fornece ao se cadastrar: <strong>nome, e-mail, telefone/WhatsApp, cidade, como você se identifica</strong> (ex.: pessoa surda, cega, acompanhante, familiar, profissional), os <strong>interesses que você seleciona</strong> (testar, lista de desejo dos óculos, indicar filmes) e os <strong>filmes que você indica</strong> no #QueroNoPingPlay.</p>
+
+      <h2>3. Para que usamos seus dados</h2>
+      <ul>
+        <li>Comunicar e nos relacionar com você sobre o PingPlay;</li>
+        <li>Avisar sobre sessões de demonstração, novidades e disponibilidade dos óculos;</li>
+        <li>Entender a demanda da comunidade (ranking de filmes mais pedidos);</li>
+        <li>Realizar ações e campanhas de divulgação, inclusive em plataformas de anúncios como a Meta (Facebook/Instagram);</li>
+        <li>Melhorar a experiência e a acessibilidade do produto.</li>
+      </ul>
+
+      <h2>4. Base legal</h2>
+      <p>O tratamento é feito com base no <strong>seu consentimento</strong> (art. 7º, I, da LGPD), manifestado ao marcar a caixa de concordância e enviar o formulário.</p>
+
+      <h2>5. Com quem compartilhamos</h2>
+      <p>Não vendemos seus dados. Eles podem ser tratados por prestadores que hospedam e processam as informações em nosso nome (ex.: <strong>Supabase</strong> e <strong>Netlify</strong>) e por plataformas de anúncios (ex.: <strong>Meta</strong>), sempre limitados às finalidades acima e com as devidas salvaguardas.</p>
+
+      <h2>6. Por quanto tempo guardamos</h2>
+      <p>Mantemos seus dados enquanto durar o relacionamento com o PingPlay ou até você revogar o consentimento / solicitar a exclusão.</p>
+
+      <h2>7. Seus direitos</h2>
+      <p>Você pode, a qualquer momento: confirmar a existência do tratamento; acessar, corrigir ou atualizar seus dados; solicitar a eliminação; pedir portabilidade; obter informação sobre compartilhamento; e <strong>revogar o consentimento</strong>. Para exercer, escreva para <a href="mailto:contato@etcfilmes.com.br">contato@etcfilmes.com.br</a>. Encarregado (DPO): <span class="ph">〔nome/e-mail〕</span>.</p>
+
+      <h2>8. Segurança</h2>
+      <p>Adotamos medidas técnicas e organizacionais para proteger seus dados contra acessos não autorizados e usos indevidos.</p>
+
+      <h2>9. Alterações</h2>
+      <p>Podemos atualizar esta política; a data no topo indica a última revisão.</p>
+
+      <a class="back" href="index.html"><span aria-hidden="true">←</span> Voltar ao PingPlay</a>
+    </article>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container inner">
+      <div class="footer-bottom" style="border:none;margin:0;padding:0;">
+        <span>Uma iniciativa ETC Filmes · Acessibilidade audiovisual de verdade.</span>
+      </div>
+    </div>
+  </footer>
+
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div>
+  </div>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>new window.VLibras.Widget('https://vlibras.gov.br/app');</script>
+  <script src="/js/a11y.js"></script>
+</body>
+</html>

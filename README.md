@@ -10,10 +10,17 @@ Iniciativa da ETC Filmes.
   Acesso na Tela — HTML puro é mais confiável para leitores de tela). Deploy
   estático no Netlify a partir do branch `main`.
 
-## Objetivos de conversão (uma página só)
-1. **#QueroNoPingPlay** — pedir um filme + ranking ao vivo dos mais pedidos.
-2. **Testar nos cinemas** — lista de espera para sessões de demonstração.
-3. **Lista de desejo** — lista de espera para a compra dos óculos.
+## Modelo (v2 — cadastro único)
+Uma pessoa faz **um cadastro só** (nome, e-mail, telefone/WhatsApp, cidade, como
+se identifica) e marca seus **interesses**: testar, lista de desejo dos óculos e/ou
+indicar filmes. Consentimento LGPD obrigatório (checkbox + `privacidade.html`).
+- **#QueroNoPingPlay** — indicação de filmes **vinculada ao cadastro** (identidade =
+  e-mail no `localStorage`); ranking = **nº de pessoas distintas por filme**, com
+  dedup (a mesma pessoa não conta o mesmo filme duas vezes).
+- **Testar** e **Lista de desejo** viram conteúdo explicativo com CTA que rola até o
+  cadastro e marca o interesse.
+Base única no Supabase (`pingplay_cadastros` + `pingplay_indicacoes`) + cópia de cada
+cadastro no **Netlify Forms** (`cadastro-pingplay`) para o marketing.
 
 ## Acessibilidade
 WCAG 2.2 AA + ABNT NBR 17225. Skip-link, foco visível (anel branco + halo roxo,
@@ -30,10 +37,11 @@ css/landing.css            ← estilos das seções
 js/config.js               ← >>> PREENCHER com URL + anon key do Supabase do PingPlay
 js/supabase.js             ← wrapper REST
 js/a11y.js                 ← barra de acessibilidade (fonte, contraste, VLibras)
-js/landing.js              ← ranking ao vivo (FLIP) + formulários
+js/landing.js              ← cadastro único, indicação c/ dedup, ranking por pessoa
+privacidade.html           ← Política de Privacidade (LGPD)
 assets/, fonts/            ← imagens e fonte Cocogoose
 netlify.toml               ← headers de cache
-supabase-migration.sql     ← rodar UMA vez no SQL Editor do Supabase
+supabase-migration.sql     ← rodar UMA vez no SQL Editor do Supabase (v2)
 ```
 
 ## Colocar no ar (checklist)
@@ -44,8 +52,9 @@ já aponta para ele. Tabelas namespaced `pingplay_*` (não mexem em nada do Aces
 na Tela e **não** ligam na `newsletter`, para não disparar o e-mail de boas-vindas
 de lá).
 1. Abra o projeto Supabase do Acesso na Tela.
-2. No **SQL Editor**, cole e rode `supabase-migration.sql` (cria tabelas `pingplay_*`,
-   RLS, seed do ranking e as RPCs de votação). Pronto — ranking e formulários ficam
+2. No **SQL Editor**, cole e rode `supabase-migration.sql` (v2: cria `pingplay_cadastros`
+   e `pingplay_indicacoes`, RLS, RPCs `pingplay_upsert_cadastro`/`pingplay_indicar`/
+   `pingplay_ranking`, e remove as tabelas da v1). Pronto — cadastro e ranking ficam
    live automaticamente.
    > Antes de rodar o SQL, o site funciona em modo demo: ranking com dados-semente
    > e formulários caindo só no Netlify Forms.

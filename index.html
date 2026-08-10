@@ -194,7 +194,7 @@
         <!-- Diferencial 2 -->
         <div class="diff diff-2">
           <div class="diff-media">
-            <div class="phone" role="img" aria-label="Tela de comando de voz do app PingPlay: status 'Ouvindo', botão de microfone azul com ondas de áudio e o comando de exemplo 'PingPlay, aumentar a audiodescrição', com sugestões 'Pausar o filme' e 'Repetir a última cena'.">
+            <div class="phone" role="img" aria-label="Tela de comando de voz do app PingPlay: status 'Ouvindo', botão de microfone azul com ondas de áudio.">
               <div aria-hidden="true" style="width:248px;border-radius:32px;background:#0c0c0f;padding:9px;box-shadow:0 34px 64px -30px rgba(40,20,80,.6);border:1px solid #221c2c;">
                 <div style="border-radius:25px;background:linear-gradient(180deg,#1a1330,#120c22);overflow:hidden;display:flex;flex-direction:column;min-height:474px;">
                   <div style="padding:18px 16px 0;display:flex;align-items:center;gap:9px;">
@@ -215,11 +215,6 @@
                       <span style="width:4px;background:#40C4F1;border-radius:3px;animation:ppWave 1s ease-in-out .6s infinite;"></span>
                       <span style="width:4px;background:#40C4F1;border-radius:3px;animation:ppWave 1s ease-in-out .72s infinite;"></span>
                     </div>
-                    <p style="font:700 16px Inter,sans-serif;color:#fff;text-align:center;margin:22px 0 0;line-height:1.35;">“PingPlay, aumentar a<br>audiodescrição.”</p>
-                  </div>
-                  <div style="padding:0 16px 20px;display:flex;flex-direction:column;gap:8px;">
-                    <div style="display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:11px;padding:11px 13px;font:600 13px Inter,sans-serif;color:#D7D0E6;"><span style="width:6px;height:6px;border-radius:50%;background:#40C4F1;flex:none;"></span>“Pausar o filme”</div>
-                    <div style="display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:11px;padding:11px 13px;font:600 13px Inter,sans-serif;color:#D7D0E6;"><span style="width:6px;height:6px;border-radius:50%;background:#40C4F1;flex:none;"></span>“Repetir a última cena”</div>
                   </div>
                 </div>
               </div>
@@ -231,10 +226,82 @@
             <p>Para quem não enxerga, navegar por menus é uma barreira. No PingPlay, a pessoa cega controla tudo falando — sem depender da tela.</p>
             <ul class="feature-list">
               <li><span class="mk" aria-hidden="true"><span></span></span>Navegação 100% por voz, sem precisar olhar.</li>
-              <li><span class="mk" aria-hidden="true"><span></span></span>Audiodescrição sob comando: aumentar, pausar, repetir.</li>
+              <li><span class="mk" aria-hidden="true"><span></span></span>Audiodescrição sob comando.</li>
               <li><span class="mk" aria-hidden="true"><span></span></span>Autonomia total — a pessoa assiste sozinha, do seu jeito.</li>
             </ul>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ CADASTRO ÚNICO ═══ -->
+    <section id="cadastro" class="cadastro section" aria-labelledby="cad-h2">
+      <div class="container">
+        <div class="section-intro">
+          <span class="eyebrow">Faça parte</span>
+          <h2 id="cad-h2">Faça parte do PingPlay</h2>
+          <p>Um cadastro só. Você diz como quer participar — testar, ter os óculos ou indicar filmes — e a gente te avisa.</p>
+        </div>
+
+        <form id="form-cadastro" class="card-white cad-form" novalidate aria-describedby="cad-req-note">
+          <p class="cad-req-note" id="cad-req-note">Campos com <span aria-hidden="true">*</span> são obrigatórios.</p>
+          <div class="cad-grid">
+            <div class="field">
+              <label for="c-nome" class="flabel">Nome completo <span class="req" aria-hidden="true">*</span></label>
+              <input id="c-nome" class="input" type="text" autocomplete="name" required aria-required="true" placeholder="Seu nome">
+            </div>
+            <div class="field">
+              <label for="c-email" class="flabel">E-mail <span class="req" aria-hidden="true">*</span></label>
+              <input id="c-email" class="input" type="email" autocomplete="email" required aria-required="true" placeholder="voce@email.com">
+            </div>
+            <div class="field">
+              <label for="c-tel" class="flabel">Telefone / WhatsApp <span class="req" aria-hidden="true">*</span></label>
+              <input id="c-tel" class="input" type="tel" inputmode="tel" autocomplete="tel" required aria-required="true" placeholder="(11) 99999-9999">
+            </div>
+            <div class="field">
+              <label for="c-cidade" class="flabel">Cidade <span class="req" aria-hidden="true">*</span></label>
+              <input id="c-cidade" class="input" type="text" autocomplete="address-level2" required aria-required="true" placeholder="Sua cidade">
+            </div>
+            <div class="field cad-col-full">
+              <label for="c-perfil" class="flabel">Você se identifica como <span class="req" aria-hidden="true">*</span></label>
+              <select id="c-perfil" class="select" required aria-required="true">
+                <option value="">Selecione…</option>
+                <option>Pessoa surda</option>
+                <option>Pessoa cega</option>
+                <option>Acompanhante</option>
+                <option>Familiar</option>
+                <option>Profissional do mercado audiovisual</option>
+                <option>Outro</option>
+              </select>
+            </div>
+          </div>
+
+          <fieldset class="cad-fieldset">
+            <legend>Tenho interesse em <span class="req" aria-hidden="true">*</span></legend>
+            <label class="checkline"><input type="checkbox" id="c-int-testar" value="testar"><span>Testar o PingPlay em sessões de demonstração</span></label>
+            <label class="checkline"><input type="checkbox" id="c-int-oculos" value="oculos"><span>Ter meus próprios óculos (lista de desejo)</span></label>
+            <label class="checkline"><input type="checkbox" id="c-int-indicar" value="indicar"><span>Indicar filmes para o #QueroNoPingPlay</span></label>
+          </fieldset>
+
+          <div class="field">
+            <label for="c-filme" class="flabel">Quer indicar um filme? <span class="opt">(opcional)</span></label>
+            <input id="c-filme" class="input" type="text" placeholder="Qual filme você quer assistir com o PingPlay?" autocomplete="off">
+          </div>
+
+          <label class="checkline cad-lgpd">
+            <input type="checkbox" id="c-lgpd" required aria-required="true">
+            <span>Li e concordo com o uso dos meus dados conforme a <a href="privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a>. <span class="req" aria-hidden="true">*</span></span>
+          </label>
+          <p class="lgpd-note">Ao enviar seus dados, você concorda com a coleta e o uso dessas informações pelo PingPlay para comunicação, relacionamento e ações relacionadas à acessibilidade audiovisual.</p>
+
+          <p class="field-error" id="cad-error" role="alert" hidden></p>
+          <button type="submit" class="btn btn-primary btn-full" style="margin-top:6px;">Fazer meu cadastro</button>
+        </form>
+
+        <div class="card-white form-success cad-success" id="cad-success" role="status" tabindex="-1" hidden>
+          <div class="puff" style="background:var(--accent);" aria-hidden="true"><span></span><span style="animation-delay:.2s;"></span><span style="animation-delay:.4s;"></span></div>
+          <h3>Cadastro feito!</h3>
+          <p id="cad-success-msg">Obrigado por fazer parte do PingPlay. A gente te avisa sobre os próximos passos.</p>
         </div>
       </div>
     </section>
@@ -245,42 +312,17 @@
         <div class="section-intro">
           <span class="eyebrow">O movimento da comunidade</span>
           <h2 id="pedir-h2">#QueroNoPingPlay</h2>
-          <p>Peça o filme que você quer assistir com acessibilidade de verdade — aqui no site e nas redes sociais. Quando a comunidade pede, o mercado escuta.</p>
+          <p>Qual filme você gostaria de assistir com acessibilidade no cinema? Indique seus filmes favoritos e ajude a mostrar quais histórias o público quer ver com o PingPlay.</p>
         </div>
 
         <div class="pedir-grid">
-          <form id="form-pedir" class="card-white" novalidate aria-labelledby="pedir-form-h">
-            <h3 id="pedir-form-h" class="sr-only">Pedir um filme para o PingPlay</h3>
-            <label for="pp-movie" class="flabel-lg">Qual filme você quer ver acessível?</label>
-            <input id="pp-movie" class="input-lg" type="text" placeholder="Ex.: Avatar 4, Superman, Demon Slayer…" autocomplete="off">
-            <div class="field-row c-1-1">
-              <div class="field">
-                <label for="pp-cidade" class="flabel">Cidade</label>
-                <input id="pp-cidade" class="input" type="text" placeholder="Sua cidade" autocomplete="address-level2">
-              </div>
-              <div class="field">
-                <label for="pp-email" class="flabel">E-mail</label>
-                <input id="pp-email" class="input" type="email" placeholder="voce@email.com" autocomplete="email">
-              </div>
-            </div>
-            <div class="field">
-              <label for="pp-perfil" class="flabel">Você é</label>
-              <select id="pp-perfil" class="select">
-                <option>Pessoa surda</option>
-                <option>Pessoa cega</option>
-                <option>Familiar / acompanhante</option>
-                <option>Educador(a)</option>
-                <option>Apoiador(a)</option>
-                <option>Profissional do mercado audiovisual</option>
-              </select>
-            </div>
-            <label class="checkline">
-              <input id="pp-notify" type="checkbox" checked>
-              <span>Quero ser avisado quando o filme estiver disponível no PingPlay.</span>
-            </label>
-            <p class="field-error" id="pp-error" role="alert" hidden></p>
-            <button type="submit" class="btn btn-primary btn-full" style="margin-top:20px;">Quero este filme no PingPlay</button>
-            <p class="form-note">Cada pedido vira dado real de demanda.<br>A comunidade escolhe, o PingPlay leva ao mercado.</p>
+          <form id="form-indicar" class="card-white" novalidate aria-labelledby="indicar-h">
+            <h3 id="indicar-h">Indique um filme</h3>
+            <label for="q-filme" class="flabel-lg">Digite o nome do filme</label>
+            <input id="q-filme" class="input-lg" type="text" placeholder="Ex.: Avatar 4, Superman, Demon Slayer…" autocomplete="off">
+            <p class="field-error" id="q-error" role="alert" hidden></p>
+            <button type="submit" class="btn btn-primary btn-full" style="margin-top:16px;">Quero esse filme no PingPlay</button>
+            <p class="form-note" id="q-note">Você precisa estar cadastrado para indicar. <a href="#cadastro" class="cta-cadastro" data-interesse="indicar">Fazer meu cadastro</a>.</p>
           </form>
 
           <section class="ranking" aria-labelledby="ranking-h" aria-describedby="ranking-sub">
@@ -288,7 +330,7 @@
               <h3 id="ranking-h">Filmes mais pedidos pela comunidade</h3>
               <span class="ranking-counter"><span class="live" aria-hidden="true"></span><span id="ranking-total">0</span> pedidos</span>
             </div>
-            <p class="ranking-sub" id="ranking-sub">Atualiza ao vivo conforme a comunidade pede. Clique em pedir e veja o ranking se mexer.</p>
+            <p class="ranking-sub" id="ranking-sub">Cada filme mostra quantas pessoas já pediram. Indique o seu e ajude a mover o ranking.</p>
             <div class="ranking-list" id="ranking-list" aria-live="polite"></div>
           </section>
         </div>
@@ -300,49 +342,17 @@
       <div class="container grid">
         <div>
           <span class="eyebrow">Experiência presencial</span>
-          <h2 id="testar-h2">Quero testar a experiência</h2>
-          <p class="lead">Entre na lista para experimentar o PingPlay em sessões abertas de demonstração — em cinemas parceiros, eventos e ações com a comunidade.</p>
+          <h2 id="testar-h2">Quero testar o PingPlay</h2>
+          <p class="lead">Quer viver essa experiência no cinema? Cadastre-se para receber informações sobre as próximas sessões de demonstração do PingPlay.</p>
           <ul class="feature-list">
             <li><span class="mk" aria-hidden="true"><span></span></span>Você diz em qual cinema ou região gostaria de testar.</li>
             <li><span class="mk" aria-hidden="true"><span></span></span>Priorizamos os cinemas com mais gente na fila.</li>
             <li><span class="mk" aria-hidden="true"><span></span></span>As unidades são da ETC Filmes — sessões guiadas, sem custo.</li>
           </ul>
-          <img class="side-img" src="/assets/testar.jpg" alt="Sessão de cinema acessível — pessoa usando os óculos PingPlay, tela com legenda e janela de Libras">
+          <button type="button" class="btn btn-primary cta-cadastro" data-interesse="testar" style="margin-top:26px;">Quero testar — fazer meu cadastro</button>
         </div>
-
-        <div class="card-form-white">
-          <form id="form-testar" novalidate>
-            <h3>Lista de espera para teste</h3>
-            <div class="field">
-              <label for="t-nome" class="flabel">Nome</label>
-              <input id="t-nome" class="input" type="text" placeholder="Seu nome" autocomplete="name">
-            </div>
-            <div class="field">
-              <label for="t-email" class="flabel">E-mail</label>
-              <input id="t-email" class="input" type="email" placeholder="voce@email.com" autocomplete="email">
-            </div>
-            <div class="field-row c-2fr1">
-              <div class="field">
-                <label for="t-cidade" class="flabel">Cidade</label>
-                <input id="t-cidade" class="input" type="text" placeholder="Cidade" autocomplete="address-level2">
-              </div>
-              <div class="field">
-                <label for="t-uf" class="flabel">UF</label>
-                <input id="t-uf" class="input uf" type="text" placeholder="SP" maxlength="2" autocomplete="address-level1">
-              </div>
-            </div>
-            <div class="field">
-              <label for="t-cinema" class="flabel">Em qual cinema você gostaria de testar?</label>
-              <input id="t-cinema" class="input" type="text" placeholder="Nome do cinema ou shopping">
-            </div>
-            <p class="field-error" id="t-error" role="alert" hidden></p>
-            <button type="submit" class="btn btn-primary btn-full" style="margin-top:20px;">Entrar na lista de teste</button>
-          </form>
-          <div class="form-success" id="t-success" role="status" tabindex="-1" hidden>
-            <div class="puff" style="background:var(--accent);" aria-hidden="true"><span></span><span style="animation-delay:.2s;"></span><span style="animation-delay:.4s;"></span></div>
-            <h3>Você está na lista de teste!</h3>
-            <p>Avisaremos assim que uma sessão de demonstração for confirmada perto de você.</p>
-          </div>
+        <div>
+          <img class="side-img" src="/assets/testar.jpg" alt="Sessão de cinema acessível — pessoa usando os óculos PingPlay, tela com legenda e janela de Libras" style="margin-top:0;">
         </div>
       </div>
     </section>
@@ -353,42 +363,13 @@
       <div class="container grid">
         <div>
           <span class="eyebrow">Os óculos PingPlay</span>
-          <h2 id="comprar-h2">Quero ter os meus óculos</h2>
-          <p class="lead">Estamos estruturando uma parceria estratégica para viabilizar o produto em escala, com uma versão mais adaptada e acessível em preço para a comunidade.</p>
-          <p class="lead-2">Nosso objetivo não é vender hardware, mas tornar essa experiência possível para o maior número de pessoas. Entre na lista e seja avisado em primeira mão.</p>
-          <img class="side-img" src="/assets/oculos.jpg" alt="Os óculos PingPlay — close elegante do produto sobre fundo escuro">
+          <h2 id="comprar-h2">Quero ter meu próprio óculos</h2>
+          <p class="lead">Quer usar o PingPlay sempre que for ao cinema? Entre para a nossa lista de desejo e seja avisado quando os óculos estiverem disponíveis para o público.</p>
+          <p class="lead-2">Nosso objetivo não é vender hardware, mas tornar essa experiência possível para o maior número de pessoas.</p>
+          <button type="button" class="btn btn-primary cta-cadastro" data-interesse="oculos" style="margin-top:26px;">Entrar na lista de desejo</button>
         </div>
-
-        <div class="card-form-white">
-          <form id="form-comprar" novalidate>
-            <h3>Lista de desejo</h3>
-            <div class="field">
-              <label for="b-nome" class="flabel">Nome</label>
-              <input id="b-nome" class="input" type="text" placeholder="Seu nome" autocomplete="name">
-            </div>
-            <div class="field">
-              <label for="b-email" class="flabel">E-mail</label>
-              <input id="b-email" class="input" type="email" placeholder="voce@email.com" autocomplete="email">
-            </div>
-            <div class="field-row c-2fr1">
-              <div class="field">
-                <label for="b-cidade" class="flabel">Cidade</label>
-                <input id="b-cidade" class="input" type="text" placeholder="Cidade" autocomplete="address-level2">
-              </div>
-              <div class="field">
-                <label for="b-uf" class="flabel">UF</label>
-                <input id="b-uf" class="input uf" type="text" placeholder="SP" maxlength="2" autocomplete="address-level1">
-              </div>
-            </div>
-            <p class="field-error" id="b-error" role="alert" hidden></p>
-            <button type="submit" class="btn btn-roxo btn-full" style="margin-top:20px;">Entrar na lista de desejo</button>
-            <p class="form-note">Sem compromisso. Você só está dizendo que tem interesse.</p>
-          </form>
-          <div class="form-success" id="b-success" role="status" tabindex="-1" hidden>
-            <div class="puff" style="background:var(--roxo);" aria-hidden="true"><span></span><span style="animation-delay:.2s;"></span><span style="animation-delay:.4s;"></span></div>
-            <h3>Você está na lista!</h3>
-            <p>Você será um dos primeiros a saber quando os óculos PingPlay estiverem disponíveis.</p>
-          </div>
+        <div>
+          <img class="side-img" src="/assets/oculos.jpg" alt="Os óculos PingPlay — close elegante do produto sobre fundo escuro" style="margin-top:0;">
         </div>
       </div>
     </section>
@@ -441,15 +422,9 @@
     <span class="msg" id="toast-msg"></span>
   </div>
 
-  <!-- Formulários ocultos p/ o Netlify Forms detectar (backup de captação) -->
-  <form name="pedir-filme" data-netlify="true" netlify-honeypot="bot-field" hidden>
-    <input type="text" name="filme"><input type="text" name="cidade"><input type="email" name="email"><input type="text" name="perfil"><input type="text" name="bot-field">
-  </form>
-  <form name="testar-cinema" data-netlify="true" netlify-honeypot="bot-field" hidden>
-    <input type="text" name="nome"><input type="email" name="email"><input type="text" name="cidade"><input type="text" name="uf"><input type="text" name="cinema"><input type="text" name="bot-field">
-  </form>
-  <form name="lista-desejo" data-netlify="true" netlify-honeypot="bot-field" hidden>
-    <input type="text" name="nome"><input type="email" name="email"><input type="text" name="cidade"><input type="text" name="uf"><input type="text" name="bot-field">
+  <!-- Formulário oculto p/ o Netlify Forms detectar (cópia da base p/ o marketing) -->
+  <form name="cadastro-pingplay" data-netlify="true" netlify-honeypot="bot-field" hidden>
+    <input type="text" name="nome"><input type="email" name="email"><input type="text" name="telefone"><input type="text" name="cidade"><input type="text" name="perfil"><input type="text" name="interesses"><input type="text" name="filme"><input type="text" name="lgpd"><input type="text" name="bot-field">
   </form>
 
   <!-- VLibras (widget oficial do Governo Federal) -->
