@@ -233,7 +233,8 @@
 .cad-req-note { margin: 0 0 16px; font-size: 13.5px; color: var(--muted); }
 .cad-req-note span, .req { color: #B42318; font-weight: 700; }
 .opt { color: var(--muted); font-weight: 500; font-size: .92em; }
-.cad-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; }
+.cad-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+.cad-grid .field { margin-top: 0; }   /* neutraliza .field + .field; o espaçamento vem do gap */
 .cad-col-full { grid-column: 1 / -1; }
 .cad-fieldset { border: none; padding: 0; margin: 20px 0 0; min-width: 0; }
 .cad-fieldset legend { font: 700 15px 'Inter', sans-serif; color: var(--ink); padding: 0; margin: 0 0 10px; }
