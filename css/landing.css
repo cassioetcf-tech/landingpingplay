@@ -224,7 +224,7 @@
 .toast .msg { font: 600 15px 'Inter', sans-serif; }
 
 /* ═══ CADASTRO ÚNICO ═══ */
-.cadastro { background: #fff; }
+.cadastro { background: var(--lavanda); border-top: 1px solid #E4DAF3; }
 .cadastro .section-intro { max-width: 44rem; margin-bottom: 34px; }
 .cadastro .section-intro .eyebrow { color: var(--roxo); }
 .cadastro .section-intro h2 { color: var(--ink); }
