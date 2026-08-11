@@ -27,7 +27,7 @@
   --ink-2: #1F2625;
   --body: #4F5151;
   --body-2: #5B5470;
-  --muted: #8A9393;
+  --muted: #667070;   /* ~5:1 em fundo claro (WCAG AA p/ texto pequeno) */
   --line: #E7EEF0;
   --line-2: #E1ECEE;
   /* Layout */
@@ -140,9 +140,6 @@ a, button, input, select, textarea, [tabindex] { outline: none; }
 }
 .a11y-contrast-menu button:hover, .a11y-contrast-menu button:focus-visible { background: var(--roxo); }
 .a11y-contrast-menu button:focus-visible { outline: 2px solid #fff !important; outline-offset: -3px !important; box-shadow: none !important; }
-
-/* Esconde o botão nativo do VLibras (acionamos pela barra) */
-[vw-access-button] { opacity: 0.001; }
 
 /* ── MODOS DE CONTRASTE (WCAG 1.4.3) ── */
 body.contrast-high      { filter: contrast(1.5) brightness(1.06); }
