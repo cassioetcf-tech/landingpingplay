@@ -7,7 +7,6 @@
 (function () {
   'use strict';
 
-  var TOP_N = 10;
   var LS_EMAIL = 'pp_email', LS_NOME = 'pp_nome';
   var _toastT = null;
 
@@ -44,69 +43,10 @@
     } catch (e) {}
   }
 
-  // ═══ RANKING ═══
-  var _rank = [];
-
-  function capturePositions() {
-    var map = {}, list = $('ranking-list');
-    if (list) list.querySelectorAll('[data-mid]').forEach(function (n) { map[n.dataset.mid] = n.getBoundingClientRect().top; });
-    return map;
-  }
-
-  function renderRanking(prevPos) {
-    var list = $('ranking-list');
-    if (!list) return;
-    var rows = _rank.slice(0, TOP_N);
-    var totalEl = $('ranking-total');
-    if (totalEl) totalEl.textContent = _rank.reduce(function (n, r) { return n + r.pessoas; }, 0).toLocaleString('pt-BR');
-
-    if (!rows.length) {
-      list.innerHTML = '<p class="ranking-empty">Ainda não há indicações.<br>Seja a primeira pessoa a pedir um filme no PingPlay!</p>';
-      return;
-    }
-    var max = rows[0].pessoas || 1;
-    list.innerHTML = rows.map(function (r, idx) {
-      var pct = Math.max(8, Math.round(r.pessoas / max * 100));
-      var badge = idx === 0 ? '<span class="rank-badge top">Mais pedido</span>' : '';
-      var pessoasLabel = r.pessoas.toLocaleString('pt-BR');
-      return '' +
-        '<div class="rank-row" data-mid="' + esc(norm(r.filme)) + '">' +
-          '<span class="rank-num" aria-hidden="true">' + String(idx + 1).padStart(2, '0') + '</span>' +
-          '<div class="rank-main">' +
-            '<div class="rank-titleline"><span class="rank-title">' + esc(r.filme) + '</span>' + badge + '</div>' +
-            '<div class="rank-bar" role="img" aria-label="' + esc(r.filme) + ': ' + pessoasLabel + ' ' + (r.pessoas === 1 ? 'pessoa pediu' : 'pessoas pediram') + ', ' + (idx + 1) + 'º lugar"><div class="rank-bar-fill" style="width:' + pct + '%"></div></div>' +
-          '</div>' +
-          '<span class="rank-votes">' + pessoasLabel + '</span>' +
-          '<button type="button" class="btn-quero" data-film="' + esc(r.filme) + '" aria-label="Pedir também o filme ' + esc(r.filme) + '"><span aria-hidden="true">+</span> Quero</button>' +
-        '</div>';
-    }).join('');
-
-    if (prevPos) {
-      requestAnimationFrame(function () {
-        list.querySelectorAll('[data-mid]').forEach(function (n) {
-          var prev = prevPos[n.dataset.mid];
-          if (prev == null) return;
-          var dy = prev - n.getBoundingClientRect().top;
-          if (dy) {
-            n.style.transition = 'none'; n.style.transform = 'translateY(' + dy + 'px)';
-            requestAnimationFrame(function () { n.style.transition = 'transform .55s cubic-bezier(.2,.85,.25,1)'; n.style.transform = ''; });
-          }
-        });
-      });
-    }
-  }
-
-  async function loadRanking() {
-    if (!CONFIG.SUPA_READY) { renderRanking(null); return; }
-    try {
-      var rows = await supabaseRpc('pingplay_ranking', { p_limit: TOP_N });
-      _rank = (rows || []).map(function (r) { return { filme: r.filme, pessoas: Number(r.pessoas) || 0 }; });
-    } catch (e) { /* mantém o que tem (provável: migração ainda não rodada) */ }
-    renderRanking(_rank.length ? null : null);
-  }
-
   // ═══ INDICAR FILME ═══
-  // Guarda um filme "pendente" quando a pessoa tenta indicar sem cadastro.
+  // A pessoa digita o filme; a indicação é gravada no Supabase e o time
+  // administra depois. Sem ranking público. Exige cadastro (identidade = e-mail)
+  // para vincular a indicação à pessoa; dedup no banco (UNIQUE email+filme).
   var _pendingFilm = '';
 
   function goToCadastro(interesse, filme) {
@@ -118,6 +58,7 @@
   }
 
   async function indicarFilme(filme, fromInput) {
+    if (!norm(filme)) return;
     var email = getEmail();
     if (!email) {
       _pendingFilm = filme || '';
@@ -125,20 +66,11 @@
       toast('Faça seu cadastro para indicar o filme.');
       return;
     }
-    if (!norm(filme)) return;
-    // otimista
-    var key = norm(filme);
-    var existing = _rank.find(function (r) { return norm(r.filme) === key; });
-    var prev = capturePositions();
-    if (existing) existing.pessoas += 1; else _rank.push({ filme: filme.trim(), pessoas: 1 });
-    _rank.sort(function (a, b) { return b.pessoas - a.pessoas || a.filme.localeCompare(b.filme); });
-    renderRanking(prev);
-    toast('“' + filme.trim() + '” recebeu seu pedido. Obrigado!');
-    announce('Você indicou “' + filme.trim() + '”. Ranking atualizado.');
     if (fromInput) { var q = $('q-filme'); if (q) q.value = ''; }
+    toast('“' + filme.trim() + '” foi enviado. Obrigado por indicar!');
+    announce('Você indicou “' + filme.trim() + '”.');
     if (CONFIG.SUPA_READY) {
-      try { await supabaseRpc('pingplay_indicar', { p_email: email, p_filme: filme.trim() }); await loadRanking(); }
-      catch (e) {}
+      try { await supabaseRpc('pingplay_indicar', { p_email: email, p_filme: filme.trim() }); } catch (e) {}
     }
   }
 
@@ -217,9 +149,6 @@
 
   // ═══ INIT ═══
   document.addEventListener('DOMContentLoaded', function () {
-    renderRanking(null);
-    loadRanking();
-
     var fc = $('form-cadastro'); if (fc) fc.addEventListener('submit', submitCadastro);
 
     var tel = $('c-tel');
@@ -244,13 +173,6 @@
       indicarFilme(v, true);
     });
 
-    // "+ Quero" nas linhas do ranking
-    var list = $('ranking-list');
-    if (list) list.addEventListener('click', function (e) {
-      var b = e.target.closest('[data-film]');
-      if (b) indicarFilme(b.getAttribute('data-film'), false);
-    });
-
     // CTAs que rolam até o cadastro e marcam o interesse
     document.querySelectorAll('.cta-cadastro').forEach(function (b) {
       b.addEventListener('click', function (e) {
@@ -259,9 +181,7 @@
       });
     });
 
-    // "Já cadastrado neste aparelho": mostra dica no form de indicação
-    if (getEmail()) { var note = $('q-note'); if (note) note.textContent = 'Indique quantos filmes quiser. Cliques repetidos no mesmo filme contam uma vez só.'; }
-
-    if (CONFIG.SUPA_READY) setInterval(loadRanking, 20000);
+    // "Já cadastrado neste aparelho": ajusta a dica do form de indicação
+    if (getEmail()) { var note = $('q-note'); if (note) note.textContent = 'Você pode indicar quantos filmes quiser.'; }
   });
 })();

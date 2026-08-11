@@ -242,24 +242,15 @@
           <p>Qual filme você gostaria de assistir com acessibilidade no cinema? Indique seus filmes favoritos e ajude a mostrar quais histórias o público quer ver com o PingPlay.</p>
         </div>
 
-        <div class="pedir-grid">
+        <div class="pedir-solo">
           <form id="form-indicar" class="card-white" novalidate aria-labelledby="indicar-h">
             <h3 id="indicar-h">Indique um filme</h3>
-            <label for="q-filme" class="flabel-lg">Digite o nome do filme</label>
+            <label for="q-filme" class="flabel-lg">Digite o nome do filme que você quer assistir com acessibilidade</label>
             <input id="q-filme" class="input-lg" type="text" placeholder="Ex.: Avatar 4, Superman, Demon Slayer…" autocomplete="off">
             <p class="field-error" id="q-error" role="alert" hidden></p>
             <button type="submit" class="btn btn-primary btn-full" style="margin-top:16px;">Quero esse filme no PingPlay</button>
             <p class="form-note" id="q-note">Você precisa estar cadastrado para indicar. <a href="#cadastro" class="cta-cadastro" data-interesse="indicar">Fazer meu cadastro</a>.</p>
           </form>
-
-          <section class="ranking" aria-labelledby="ranking-h" aria-describedby="ranking-sub">
-            <div class="ranking-head">
-              <h3 id="ranking-h">Filmes mais pedidos pela comunidade</h3>
-              <span class="ranking-counter"><span class="live" aria-hidden="true"></span><span id="ranking-total">0</span> pedidos</span>
-            </div>
-            <p class="ranking-sub" id="ranking-sub">Cada filme mostra quantas pessoas já pediram. Indique o seu e ajude a mover o ranking.</p>
-            <div class="ranking-list" id="ranking-list" aria-live="polite"></div>
-          </section>
         </div>
       </div>
     </section>

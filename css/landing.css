@@ -140,6 +140,7 @@
 .pedir .section-intro h2 { font-weight: 800; font-size: clamp(40px,6vw,72px); line-height: 1.0; letter-spacing: -.03em; color: var(--accent); margin: 12px 0 0; }
 .pedir .section-intro p { color: #D3D8DC; }
 .pedir-grid { display: grid; grid-template-columns: 0.92fr 1.08fr; gap: 24px; align-items: start; }
+.pedir-solo { max-width: 560px; margin: 0 auto; }
 .pedir .card-white .flabel-lg { display: block; font: 700 15px 'Inter', sans-serif; color: #2D3334; margin: 0 0 8px; }
 .pedir .input-lg { width: 100%; padding: 16px; border: 1.5px solid #D5E0E3; border-radius: 12px; font: 600 17px 'Inter', sans-serif; color: #1F2625; background: #fff; }
 .pedir .input-lg:focus { border-color: var(--accent); }
