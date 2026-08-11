@@ -196,10 +196,12 @@
     announce('Cadastro concluído com sucesso.');
 
     // Persistência
-    netlifyCapture('cadastro-pingplay', {
-      nome: nome, email: email, telefone: tel, cidade: cidade, perfil: perfil,
-      interesses: interesses.join(', '), filme: filme, lgpd: 'sim'
-    });
+    var dados = { nome: nome, email: email, telefone: tel, cidade: cidade, perfil: perfil,
+                  interesses: interesses.join(', '), filme: filme, lgpd: 'sim' };
+    // E-mails (confirmação ao usuário + cópia interna) via função dedicada
+    try { fetch('/.netlify/functions/cadastro', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados) }).catch(function () {}); } catch (e) {}
+    // Cópia p/ Netlify Forms (best-effort; serve de lista se a detecção estiver ativa)
+    netlifyCapture('cadastro-pingplay', dados);
     if (CONFIG.SUPA_READY) {
       try {
         await supabaseRpc('pingplay_upsert_cadastro', {

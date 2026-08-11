@@ -1,24 +1,19 @@
-// ── submission-created — e-mails do cadastro PingPlay (SMTP / Microsoft 365) ───
-// Função de EVENTO do Netlify: roda sozinha a cada envio de formulário Netlify.
-// No formulário 'cadastro-pingplay' envia:
+// ── cadastro — e-mails do cadastro PingPlay (SMTP / Microsoft 365) ────────────
+// Função HTTP chamada DIRETO pelo front (POST /.netlify/functions/cadastro) após
+// o cadastro. Envia:
 //   1) e-mail de confirmação para a pessoa que se cadastrou (marca PingPlay);
 //   2) cópia interna com TODOS os dados para o time.
-// Envia por SMTP autenticado usando a caixa contato@pingplay.com.br (Microsoft 365).
+// Via SMTP autenticado pela caixa contato@pingplay.com.br (Microsoft 365).
+// Independente do Netlify Forms.
 //
 // Variáveis de ambiente (Netlify → Site configuration → Environment variables):
-//   SMTP_USER    caixa/usuário SMTP, ex.: contato@pingplay.com.br  (obrigatória)
-//   SMTP_PASS    senha da caixa                                    (obrigatória)
-//   SMTP_HOST    default: smtp.office365.com
-//   SMTP_PORT    default: 587 (STARTTLS)
-//   PP_MAIL_FROM default: "PingPlay <SMTP_USER>"
-//   PP_MAIL_TO   cópia interna (vírgula). Default: cassio@ / daniella.leal@ /
-//                renato.azevedo@ etcfilmes.com.br
-//   PP_REPLY_TO  (opcional) reply-to do e-mail de confirmação ao usuário
+//   SMTP_USER  contato@pingplay.com.br   · SMTP_PASS  senha da caixa
+//   SMTP_HOST  default smtp.office365.com · SMTP_PORT  default 587
+//   PP_MAIL_FROM  default "PingPlay <SMTP_USER>"
+//   PP_MAIL_TO    cópia interna (vírgula). Default: cassio@/daniella.leal@/renato.azevedo@etcfilmes.com.br
+//   PP_REPLY_TO   (opcional) reply-to do e-mail de confirmação
 //
-// ⚠️ No Microsoft 365, a caixa precisa estar com "Authenticated SMTP" HABILITADO
-//    (admin: Microsoft 365 admin center → Usuários → a caixa → Email → Gerenciar
-//    aplicativos de email → marcar "SMTP autenticado"). Se o tenant estiver com
-//    "Security Defaults" ligado, o Basic Auth do SMTP fica bloqueado.
+// ⚠️ A caixa precisa estar com "Authenticated SMTP" habilitado no M365.
 
 const nodemailer = require('nodemailer');
 
@@ -35,19 +30,17 @@ const LOGO     = SITE_URL + '/assets/pingplay-logo-white.png';
 
 function firstName(n) { return n ? String(n).trim().split(/\s+/)[0] : ''; }
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function validEmail(s) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((s || '').trim()); }
 
 let _tx = null;
 function transport() {
   if (_tx) return _tx;
   _tx = nodemailer.createTransport({
-    host: HOST, port: PORT,
-    secure: PORT === 465,          // 465 = TLS direto; 587 = STARTTLS
-    requireTLS: PORT === 587,
+    host: HOST, port: PORT, secure: PORT === 465, requireTLS: PORT === 587,
     auth: { user: USER, pass: PASS },
   });
   return _tx;
 }
-
 async function send(msg) {
   try { await transport().sendMail(msg); return true; }
   catch (e) { console.error('[pingplay-mail] SMTP erro: ' + e.message); return false; }
@@ -75,14 +68,12 @@ function welcomeHtml(nome) {
       '<p style="text-align:center;font-size:12px;color:#8A9393;margin:16px 0 0;">Uma iniciativa ETC Filmes · Acessibilidade audiovisual de verdade.</p>' +
     '</div></body></html>';
 }
-
 function welcomeText(nome) {
   const ola = nome ? 'Olá, ' + nome + '!' : 'Olá!';
   return ola + '\n\nRecebemos o seu cadastro no PingPlay com sucesso. Em breve entraremos em contato com as próximas informações, de acordo com os interesses que você escolheu.\n\n' +
     'O PingPlay leva legenda, Libras e audiodescrição para dentro da experiência do cinema.\n\n' + SITE_URL + '\n\n' +
     'Você recebeu este e-mail porque se cadastrou em queronopingplay.com. Se não quiser mais receber, responda este e-mail avisando.';
 }
-
 function teamHtml(d) {
   const rows = [
     ['Nome', d.nome], ['E-mail', d.email], ['Telefone/WhatsApp', d.telefone],
@@ -100,38 +91,30 @@ function teamHtml(d) {
 }
 
 exports.handler = async function (event) {
-  let payload = {};
-  try { payload = (JSON.parse(event.body || '{}').payload) || {}; }
-  catch (e) { return { statusCode: 200, body: 'json inválido' }; }
+  if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
 
-  if ((payload.form_name || '') !== 'cadastro-pingplay') return { statusCode: 200, body: 'form ignorado' };
-  if (!USER || !PASS) { console.warn('[pingplay-mail] SMTP_USER/SMTP_PASS ausentes'); return { statusCode: 200, body: 'config SMTP ausente' }; }
+  let d = {};
+  try { d = JSON.parse(event.body || '{}'); } catch (e) { return { statusCode: 400, body: 'json inválido' }; }
 
-  const d = payload.data || {};
+  // Honeypot anti-spam (o front nunca preenche)
+  if (d.hp) return { statusCode: 200, body: JSON.stringify({ ok: true, skipped: 'hp' }) };
+
   const email = (d.email || '').trim();
+  if (!validEmail(email)) return { statusCode: 400, body: JSON.stringify({ ok: false, reason: 'email' }) };
+
+  if (!USER || !PASS) { console.warn('[pingplay-mail] SMTP_USER/SMTP_PASS ausentes'); return { statusCode: 200, body: JSON.stringify({ ok: false, reason: 'smtp-config' }) }; }
 
   // 1) Confirmação para quem se cadastrou
-  if (email) {
-    const msg = {
-      from: FROM, to: email,
-      subject: 'Recebemos o seu cadastro no PingPlay',
-      html: welcomeHtml(firstName(d.nome)),
-      text: welcomeText(firstName(d.nome)),
-    };
-    if (REPLY_TO) msg.replyTo = REPLY_TO;
-    await send(msg);
-  }
+  const wc = { from: FROM, to: email, subject: 'Recebemos o seu cadastro no PingPlay', html: welcomeHtml(firstName(d.nome)), text: welcomeText(firstName(d.nome)) };
+  if (REPLY_TO) wc.replyTo = REPLY_TO;
+  const okUser = await send(wc);
 
-  // 2) Cópia interna para o time (com todos os dados)
+  // 2) Cópia interna para o time
+  let okTeam = true;
   if (TEAM.length) {
-    const msg = {
-      from: FROM, to: TEAM.join(', '),
-      subject: 'Novo cadastro PingPlay: ' + (d.nome || email || '—'),
-      html: teamHtml(d),
-    };
-    if (email) msg.replyTo = email;
-    await send(msg);
+    const tc = { from: FROM, to: TEAM.join(', '), subject: 'Novo cadastro PingPlay: ' + (d.nome || email || '—'), html: teamHtml(d), replyTo: email };
+    okTeam = await send(tc);
   }
 
-  return { statusCode: 200, body: 'ok' };
+  return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ok: okUser && okTeam }) };
 };
