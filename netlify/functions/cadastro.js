@@ -42,8 +42,8 @@ function transport() {
   return _tx;
 }
 async function send(msg) {
-  try { await transport().sendMail(msg); return true; }
-  catch (e) { console.error('[pingplay-mail] SMTP erro: ' + e.message); return false; }
+  try { await transport().sendMail(msg); return { ok: true }; }
+  catch (e) { console.error('[pingplay-mail] SMTP erro: ' + e.message); return { ok: false, error: e.message }; }
 }
 
 function welcomeHtml(nome) {
@@ -107,14 +107,16 @@ exports.handler = async function (event) {
   // 1) Confirmação para quem se cadastrou
   const wc = { from: FROM, to: email, subject: 'Recebemos o seu cadastro no PingPlay', html: welcomeHtml(firstName(d.nome)), text: welcomeText(firstName(d.nome)) };
   if (REPLY_TO) wc.replyTo = REPLY_TO;
-  const okUser = await send(wc);
+  const rUser = await send(wc);
 
   // 2) Cópia interna para o time
-  let okTeam = true;
+  let rTeam = { ok: true };
   if (TEAM.length) {
     const tc = { from: FROM, to: TEAM.join(', '), subject: 'Novo cadastro PingPlay: ' + (d.nome || email || '—'), html: teamHtml(d), replyTo: email };
-    okTeam = await send(tc);
+    rTeam = await send(tc);
   }
 
-  return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ok: okUser && okTeam }) };
+  const out = { ok: rUser.ok && rTeam.ok };
+  if (d.debug) out.error = rUser.error || rTeam.error || null; // detalhe só quando pedido explicitamente
+  return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(out) };
 };
