@@ -1,0 +1,8 @@
+{
+  "name": "landingpingplay-functions",
+  "private": true,
+  "description": "Dependências das Netlify Functions do PingPlay (envio de e-mail via SMTP).",
+  "dependencies": {
+    "nodemailer": "^6.9.14"
+  }
+}

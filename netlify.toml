@@ -3,9 +3,10 @@
   publish = "."
   command = ""
 
-# Funções serverless (e-mails do cadastro via Microsoft Graph)
+# Funções serverless (e-mails do cadastro via SMTP / Microsoft 365)
 [functions]
   directory = "netlify/functions"
+  node_bundler = "esbuild"
 
 # JS/CSS sem hash no nome → revalidar sempre (evita servir versão velha em cache)
 [[headers]]

@@ -74,31 +74,26 @@ de lá).
   (todos os envios + **export CSV**). É a fonte simples para o marketing. A base
   relacional fica no Supabase (para ranking/dedup e consultas mais ricas).
 
-### 4. E-mails do cadastro (Microsoft 365 / Graph) — `netlify/functions/submission-created.js`
-Roda sozinha a cada envio do formulário e manda 2 e-mails via **Microsoft Graph**
-(OAuth client credentials), usando o M365 da ETC Filmes:
+### 4. E-mails do cadastro (SMTP / Microsoft 365) — `netlify/functions/submission-created.js`
+Roda sozinha a cada envio do formulário e manda 2 e-mails via **SMTP autenticado**
+(`nodemailer`), pela caixa `contato@pingplay.com.br` (M365):
 1. **Confirmação** para quem se cadastrou (marca PingPlay).
 2. **Cópia interna** com todos os dados para o time (`reply-to` = a pessoa).
 
-**Setup no Microsoft 365 (admin):**
-1. **Entra ID (Azure AD) → App registrations → New registration** (ex.: "PingPlay
-   Landing Mail"). Anote o **Application (client) ID** e o **Directory (tenant) ID**.
-2. **Certificates & secrets → New client secret** → copie o **Value** (client secret).
-3. **API permissions → Add → Microsoft Graph → Application permissions → `Mail.Send`**
-   → **Grant admin consent**.
-4. Garanta uma **caixa remetente real** com o endereço desejado. Para
-   `@queronopingplay.com`: adicione o domínio como **accepted domain** no M365 e crie
-   uma **shared mailbox** `contato@queronopingplay.com` (shared não precisa de licença
-   e recebe respostas). Ou use uma caixa `@etcfilmes.com.br` que já exista.
-5. *(Recomendado)* Restrinja o app a essa caixa com uma **Application Access Policy**
-   (`New-ApplicationAccessPolicy`), senão o app pode enviar como qualquer caixa.
+**Pré-requisito no M365 (uma vez):** a caixa precisa estar com **"Authenticated SMTP"
+habilitado** (admin center → Usuários → a caixa → Email → Gerenciar aplicativos de
+email → marcar **SMTP autenticado**). Se o tenant estiver com **Security Defaults**
+ligado, o Basic Auth do SMTP fica bloqueado.
 
 **Variáveis de ambiente no projeto Netlify `landingpingplay`:**
-- `MS_TENANT_ID`, `MS_CLIENT_ID`, `MS_CLIENT_SECRET` — do app registrado acima.
-- `MS_SENDER` — caixa remetente (ex.: `contato@queronopingplay.com`).
+- `SMTP_USER` = `contato@pingplay.com.br` · `SMTP_PASS` = senha da caixa.
+- `SMTP_HOST` (default `smtp.office365.com`) · `SMTP_PORT` (default `587`).
+- `PP_MAIL_FROM` (default `PingPlay <SMTP_USER>`).
 - `PP_MAIL_TO` — cópia interna (vírgula). Default: cassio@ / daniella.leal@ /
   renato.azevedo@ etcfilmes.com.br.
 - `PP_REPLY_TO` (opcional) — reply-to do e-mail de confirmação.
+
+Dependência: `nodemailer` (ver `package.json`; o Netlify instala no deploy).
 
 ## Desenvolvimento local
 Qualquer servidor estático na raiz, ex.: `npx serve .` e abra `http://localhost:3000`.

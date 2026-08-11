@@ -1,28 +1,32 @@
-// ── submission-created — e-mails do cadastro PingPlay (Microsoft 365 / Graph) ──
+// ── submission-created — e-mails do cadastro PingPlay (SMTP / Microsoft 365) ───
 // Função de EVENTO do Netlify: roda sozinha a cada envio de formulário Netlify.
 // No formulário 'cadastro-pingplay' envia:
 //   1) e-mail de confirmação para a pessoa que se cadastrou (marca PingPlay);
 //   2) cópia interna com TODOS os dados para o time.
-// Envia via Microsoft Graph (OAuth client credentials) usando o Microsoft 365 da
-// ETC Filmes — sem custo de terceiros e com caixa que recebe respostas.
+// Envia por SMTP autenticado usando a caixa contato@pingplay.com.br (Microsoft 365).
 //
 // Variáveis de ambiente (Netlify → Site configuration → Environment variables):
-//   MS_TENANT_ID     ID do tenant (Entra ID / Azure AD) da ETC Filmes
-//   MS_CLIENT_ID     Application (client) ID do app registrado
-//   MS_CLIENT_SECRET Client secret do app
-//   MS_SENDER        caixa remetente (UPN/e-mail), ex.: contato@queronopingplay.com
-//                    (precisa ser uma caixa real no M365 — pode ser shared mailbox)
-//   PP_MAIL_TO       destinos da cópia interna (vírgula). Default: cassio@ /
-//                    daniella.leal@ / renato.azevedo@ etcfilmes.com.br
-//   PP_REPLY_TO      (opcional) reply-to do e-mail de confirmação ao usuário
+//   SMTP_USER    caixa/usuário SMTP, ex.: contato@pingplay.com.br  (obrigatória)
+//   SMTP_PASS    senha da caixa                                    (obrigatória)
+//   SMTP_HOST    default: smtp.office365.com
+//   SMTP_PORT    default: 587 (STARTTLS)
+//   PP_MAIL_FROM default: "PingPlay <SMTP_USER>"
+//   PP_MAIL_TO   cópia interna (vírgula). Default: cassio@ / daniella.leal@ /
+//                renato.azevedo@ etcfilmes.com.br
+//   PP_REPLY_TO  (opcional) reply-to do e-mail de confirmação ao usuário
 //
-// O app precisa da permissão de APLICAÇÃO `Mail.Send` (com consentimento do admin).
-// Recomendado restringir a caixa via Application Access Policy (ver README).
+// ⚠️ No Microsoft 365, a caixa precisa estar com "Authenticated SMTP" HABILITADO
+//    (admin: Microsoft 365 admin center → Usuários → a caixa → Email → Gerenciar
+//    aplicativos de email → marcar "SMTP autenticado"). Se o tenant estiver com
+//    "Security Defaults" ligado, o Basic Auth do SMTP fica bloqueado.
 
-const TENANT   = process.env.MS_TENANT_ID || '';
-const CLIENT   = process.env.MS_CLIENT_ID || '';
-const SECRET   = process.env.MS_CLIENT_SECRET || '';
-const SENDER   = process.env.MS_SENDER || '';
+const nodemailer = require('nodemailer');
+
+const HOST     = process.env.SMTP_HOST || 'smtp.office365.com';
+const PORT     = parseInt(process.env.SMTP_PORT || '587', 10);
+const USER     = process.env.SMTP_USER || '';
+const PASS     = process.env.SMTP_PASS || '';
+const FROM     = process.env.PP_MAIL_FROM || ('PingPlay <' + (USER || 'contato@pingplay.com.br') + '>');
 const TEAM     = (process.env.PP_MAIL_TO || 'cassio@etcfilmes.com.br, daniella.leal@etcfilmes.com.br, renato.azevedo@etcfilmes.com.br')
                    .split(',').map(function (s) { return s.trim(); }).filter(Boolean);
 const REPLY_TO = process.env.PP_REPLY_TO || '';
@@ -31,31 +35,22 @@ const LOGO     = SITE_URL + '/assets/pingplay-logo-white.png';
 
 function firstName(n) { return n ? String(n).trim().split(/\s+/)[0] : ''; }
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-function recips(list) { return list.map(function (a) { return { emailAddress: { address: a } }; }); }
 
-async function graphToken() {
-  const body = 'client_id=' + encodeURIComponent(CLIENT) +
-    '&client_secret=' + encodeURIComponent(SECRET) +
-    '&scope=' + encodeURIComponent('https://graph.microsoft.com/.default') +
-    '&grant_type=client_credentials';
-  const r = await fetch('https://login.microsoftonline.com/' + encodeURIComponent(TENANT) + '/oauth2/v2.0/token', {
-    method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body,
+let _tx = null;
+function transport() {
+  if (_tx) return _tx;
+  _tx = nodemailer.createTransport({
+    host: HOST, port: PORT,
+    secure: PORT === 465,          // 465 = TLS direto; 587 = STARTTLS
+    requireTLS: PORT === 587,
+    auth: { user: USER, pass: PASS },
   });
-  const j = await r.json().catch(function () { return {}; });
-  if (!r.ok) { console.error('[pingplay-mail] token HTTP ' + r.status + ': ' + JSON.stringify(j)); return ''; }
-  return j.access_token || '';
+  return _tx;
 }
 
-async function sendMail(token, msg) {
-  try {
-    const r = await fetch('https://graph.microsoft.com/v1.0/users/' + encodeURIComponent(SENDER) + '/sendMail', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: msg, saveToSentItems: false }),
-    });
-    if (!r.ok) console.error('[pingplay-mail] sendMail HTTP ' + r.status + ': ' + (await r.text()));
-    return r.ok;
-  } catch (e) { console.error('[pingplay-mail] erro: ' + e.message); return false; }
+async function send(msg) {
+  try { await transport().sendMail(msg); return true; }
+  catch (e) { console.error('[pingplay-mail] SMTP erro: ' + e.message); return false; }
 }
 
 function welcomeHtml(nome) {
@@ -81,6 +76,13 @@ function welcomeHtml(nome) {
     '</div></body></html>';
 }
 
+function welcomeText(nome) {
+  const ola = nome ? 'Olá, ' + nome + '!' : 'Olá!';
+  return ola + '\n\nRecebemos o seu cadastro no PingPlay com sucesso. Em breve entraremos em contato com as próximas informações, de acordo com os interesses que você escolheu.\n\n' +
+    'O PingPlay leva legenda, Libras e audiodescrição para dentro da experiência do cinema.\n\n' + SITE_URL + '\n\n' +
+    'Você recebeu este e-mail porque se cadastrou em queronopingplay.com. Se não quiser mais receber, responda este e-mail avisando.';
+}
+
 function teamHtml(d) {
   const rows = [
     ['Nome', d.nome], ['E-mail', d.email], ['Telefone/WhatsApp', d.telefone],
@@ -103,13 +105,7 @@ exports.handler = async function (event) {
   catch (e) { return { statusCode: 200, body: 'json inválido' }; }
 
   if ((payload.form_name || '') !== 'cadastro-pingplay') return { statusCode: 200, body: 'form ignorado' };
-  if (!TENANT || !CLIENT || !SECRET || !SENDER) {
-    console.warn('[pingplay-mail] variáveis do Microsoft Graph ausentes');
-    return { statusCode: 200, body: 'config Graph ausente' };
-  }
-
-  const token = await graphToken();
-  if (!token) return { statusCode: 200, body: 'sem token' };
+  if (!USER || !PASS) { console.warn('[pingplay-mail] SMTP_USER/SMTP_PASS ausentes'); return { statusCode: 200, body: 'config SMTP ausente' }; }
 
   const d = payload.data || {};
   const email = (d.email || '').trim();
@@ -117,23 +113,24 @@ exports.handler = async function (event) {
   // 1) Confirmação para quem se cadastrou
   if (email) {
     const msg = {
+      from: FROM, to: email,
       subject: 'Recebemos o seu cadastro no PingPlay',
-      body: { contentType: 'HTML', content: welcomeHtml(firstName(d.nome)) },
-      toRecipients: recips([email]),
+      html: welcomeHtml(firstName(d.nome)),
+      text: welcomeText(firstName(d.nome)),
     };
-    if (REPLY_TO) msg.replyTo = recips([REPLY_TO]);
-    await sendMail(token, msg);
+    if (REPLY_TO) msg.replyTo = REPLY_TO;
+    await send(msg);
   }
 
   // 2) Cópia interna para o time (com todos os dados)
   if (TEAM.length) {
     const msg = {
+      from: FROM, to: TEAM.join(', '),
       subject: 'Novo cadastro PingPlay: ' + (d.nome || email || '—'),
-      body: { contentType: 'HTML', content: teamHtml(d) },
-      toRecipients: recips(TEAM),
+      html: teamHtml(d),
     };
-    if (email) msg.replyTo = recips([email]);
-    await sendMail(token, msg);
+    if (email) msg.replyTo = email;
+    await send(msg);
   }
 
   return { statusCode: 200, body: 'ok' };
