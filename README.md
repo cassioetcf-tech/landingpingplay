@@ -67,11 +67,28 @@ de lá).
    directory `.` (já definido em `netlify.toml`).
 4. Confirme o domínio `queronopingplay.com` em **Domain management**.
 
-### 3. Formulários
-- Cada envio grava no Supabase (ranking/pedidos/leads) **e** é capturado pelo
-  **Netlify Forms** como backup (`pedir-filme`, `testar-cinema`, `lista-desejo`
-  aparecem em **Forms** no painel). Configure notificações por e-mail em
-  Netlify → Forms se quiser aviso a cada lead.
+### 3. Formulários e lista de cadastros
+- Cada cadastro grava no Supabase (`pingplay_cadastros` + `pingplay_indicacoes`)
+  **e** é capturado pelo **Netlify Forms** (`cadastro-pingplay`).
+- **Acesso à lista completa:** painel Netlify → **Forms → cadastro-pingplay**
+  (todos os envios + **export CSV**). É a fonte simples para o marketing. A base
+  relacional fica no Supabase (para ranking/dedup e consultas mais ricas).
+
+### 4. E-mails do cadastro (Resend) — `netlify/functions/submission-created.js`
+Roda sozinha a cada envio do formulário e manda 2 e-mails via Resend:
+1. **Confirmação** para quem se cadastrou (marca PingPlay).
+2. **Cópia interna** com todos os dados para o time (`reply-to` = a pessoa).
+
+Variáveis de ambiente no projeto Netlify `landingpingplay`:
+- `RESEND_API_KEY` (obrigatória) — a mesma chave do Acesso na Tela.
+- `PP_MAIL_FROM` — remetente **verificado** no Resend. Default
+  `PingPlay <boasvindas@acessonatela.com>` (domínio já verificado). Para remeter
+  de `@queronopingplay.com`, verifique o domínio no Resend (DNS) e troque aqui.
+- `PP_MAIL_TO` — destinos da cópia interna (vírgula). Default: cassio@ /
+  daniella.leal@ / renato.azevedo@ etcfilmes.com.br.
+- `PP_REPLY_TO` (opcional) — reply-to do e-mail de confirmação.
+> ⚠️ Destinos `@etcfilmes.com.br` podem reter e-mails de domínio remetente novo
+> em quarentena/spam — conferir no primeiro teste.
 
 ## Desenvolvimento local
 Qualquer servidor estático na raiz, ex.: `npx serve .` e abra `http://localhost:3000`.

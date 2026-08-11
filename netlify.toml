@@ -3,6 +3,10 @@
   publish = "."
   command = ""
 
+# Funções serverless (e-mails do cadastro via Resend)
+[functions]
+  directory = "netlify/functions"
+
 # JS/CSS sem hash no nome → revalidar sempre (evita servir versão velha em cache)
 [[headers]]
   for = "/js/*"
