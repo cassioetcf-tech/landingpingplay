@@ -26,7 +26,7 @@ const TEAM     = (process.env.PP_MAIL_TO || 'cassio@etcfilmes.com.br, daniella.l
                    .split(',').map(function (s) { return s.trim(); }).filter(Boolean);
 const REPLY_TO = process.env.PP_REPLY_TO || '';
 const SITE_URL = 'https://queronopingplay.com';
-const LOGO     = SITE_URL + '/assets/pingplay-logo-white.png';
+const LOGO     = SITE_URL + '/assets/pingplay-logo.png';
 
 function firstName(n) { return n ? String(n).trim().split(/\s+/)[0] : ''; }
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -51,7 +51,7 @@ function welcomeHtml(nome) {
   return '<!DOCTYPE html><html lang="pt-BR"><body style="margin:0;padding:0;background:#F1ECF9;font-family:Arial,Helvetica,sans-serif;color:#231542;">' +
     '<div style="max-width:560px;margin:0 auto;padding:24px 16px;">' +
       '<div style="text-align:center;padding:6px 0 18px;">' +
-        '<a href="' + SITE_URL + '"><img src="' + LOGO + '" alt="PingPlay" width="170" style="max-width:58%;height:auto;border:0;display:inline-block;"></a>' +
+        '<a href="' + SITE_URL + '" style="display:inline-block;background:#ffffff;border-radius:12px;padding:14px 20px;text-decoration:none;"><img src="' + LOGO + '" alt="PingPlay" width="170" style="width:170px;max-width:60vw;height:auto;border:0;display:block;"></a>' +
       '</div>' +
       '<div style="background:#583192;border-radius:14px 14px 0 0;padding:28px 28px 22px;">' +
         '<h1 style="margin:0;color:#ffffff;font-size:22px;line-height:1.25;">Recebemos o seu cadastro!</h1>' +
