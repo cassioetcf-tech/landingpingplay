@@ -61,7 +61,7 @@
     if (totalEl) totalEl.textContent = _rank.reduce(function (n, r) { return n + r.pessoas; }, 0).toLocaleString('pt-BR');
 
     if (!rows.length) {
-      list.innerHTML = '<p class="ranking-empty">Ainda não há indicações. Seja a primeira pessoa a pedir um filme no PingPlay!</p>';
+      list.innerHTML = '<p class="ranking-empty">Ainda não há indicações.<br>Seja a primeira pessoa a pedir um filme no PingPlay!</p>';
       return;
     }
     var max = rows[0].pessoas || 1;
