@@ -3,7 +3,7 @@
   publish = "."
   command = ""
 
-# Funções serverless (e-mails do cadastro via Resend)
+# Funções serverless (e-mails do cadastro via Microsoft Graph)
 [functions]
   directory = "netlify/functions"
 

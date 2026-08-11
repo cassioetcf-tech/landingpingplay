@@ -74,21 +74,31 @@ de lá).
   (todos os envios + **export CSV**). É a fonte simples para o marketing. A base
   relacional fica no Supabase (para ranking/dedup e consultas mais ricas).
 
-### 4. E-mails do cadastro (Resend) — `netlify/functions/submission-created.js`
-Roda sozinha a cada envio do formulário e manda 2 e-mails via Resend:
+### 4. E-mails do cadastro (Microsoft 365 / Graph) — `netlify/functions/submission-created.js`
+Roda sozinha a cada envio do formulário e manda 2 e-mails via **Microsoft Graph**
+(OAuth client credentials), usando o M365 da ETC Filmes:
 1. **Confirmação** para quem se cadastrou (marca PingPlay).
 2. **Cópia interna** com todos os dados para o time (`reply-to` = a pessoa).
 
-Variáveis de ambiente no projeto Netlify `landingpingplay`:
-- `RESEND_API_KEY` (obrigatória) — a mesma chave do Acesso na Tela.
-- `PP_MAIL_FROM` — remetente **verificado** no Resend. Default
-  `PingPlay <boasvindas@acessonatela.com>` (domínio já verificado). Para remeter
-  de `@queronopingplay.com`, verifique o domínio no Resend (DNS) e troque aqui.
-- `PP_MAIL_TO` — destinos da cópia interna (vírgula). Default: cassio@ /
-  daniella.leal@ / renato.azevedo@ etcfilmes.com.br.
+**Setup no Microsoft 365 (admin):**
+1. **Entra ID (Azure AD) → App registrations → New registration** (ex.: "PingPlay
+   Landing Mail"). Anote o **Application (client) ID** e o **Directory (tenant) ID**.
+2. **Certificates & secrets → New client secret** → copie o **Value** (client secret).
+3. **API permissions → Add → Microsoft Graph → Application permissions → `Mail.Send`**
+   → **Grant admin consent**.
+4. Garanta uma **caixa remetente real** com o endereço desejado. Para
+   `@queronopingplay.com`: adicione o domínio como **accepted domain** no M365 e crie
+   uma **shared mailbox** `contato@queronopingplay.com` (shared não precisa de licença
+   e recebe respostas). Ou use uma caixa `@etcfilmes.com.br` que já exista.
+5. *(Recomendado)* Restrinja o app a essa caixa com uma **Application Access Policy**
+   (`New-ApplicationAccessPolicy`), senão o app pode enviar como qualquer caixa.
+
+**Variáveis de ambiente no projeto Netlify `landingpingplay`:**
+- `MS_TENANT_ID`, `MS_CLIENT_ID`, `MS_CLIENT_SECRET` — do app registrado acima.
+- `MS_SENDER` — caixa remetente (ex.: `contato@queronopingplay.com`).
+- `PP_MAIL_TO` — cópia interna (vírgula). Default: cassio@ / daniella.leal@ /
+  renato.azevedo@ etcfilmes.com.br.
 - `PP_REPLY_TO` (opcional) — reply-to do e-mail de confirmação.
-> ⚠️ Destinos `@etcfilmes.com.br` podem reter e-mails de domínio remetente novo
-> em quarentena/spam — conferir no primeiro teste.
 
 ## Desenvolvimento local
 Qualquer servidor estático na raiz, ex.: `npx serve .` e abra `http://localhost:3000`.

@@ -1,22 +1,28 @@
-// ── submission-created — e-mails do cadastro PingPlay (Resend) ────────────────
+// ── submission-created — e-mails do cadastro PingPlay (Microsoft 365 / Graph) ──
 // Função de EVENTO do Netlify: roda sozinha a cada envio de formulário Netlify.
 // No formulário 'cadastro-pingplay' envia:
 //   1) e-mail de confirmação para a pessoa que se cadastrou (marca PingPlay);
 //   2) cópia interna com TODOS os dados para o time.
-// Usa Resend (mesma conta do Acesso na Tela).
+// Envia via Microsoft Graph (OAuth client credentials) usando o Microsoft 365 da
+// ETC Filmes — sem custo de terceiros e com caixa que recebe respostas.
 //
 // Variáveis de ambiente (Netlify → Site configuration → Environment variables):
-//   RESEND_API_KEY  (obrigatória) — chave da API do Resend (a mesma do Acesso na Tela)
-//   PP_MAIL_FROM    remetente VERIFICADO no Resend.
-//                   Default: "PingPlay <boasvindas@acessonatela.com>" (domínio já
-//                   verificado). Para remeter de @queronopingplay.com, verifique o
-//                   domínio no Resend (DNS) e troque esta variável.
-//   PP_MAIL_TO      destinos da cópia interna (separados por vírgula).
-//                   Default: cassio@ / daniella.leal@ / renato.azevedo@ etcfilmes.com.br
-//   PP_REPLY_TO     (opcional) reply-to do e-mail de confirmação ao usuário
+//   MS_TENANT_ID     ID do tenant (Entra ID / Azure AD) da ETC Filmes
+//   MS_CLIENT_ID     Application (client) ID do app registrado
+//   MS_CLIENT_SECRET Client secret do app
+//   MS_SENDER        caixa remetente (UPN/e-mail), ex.: contato@queronopingplay.com
+//                    (precisa ser uma caixa real no M365 — pode ser shared mailbox)
+//   PP_MAIL_TO       destinos da cópia interna (vírgula). Default: cassio@ /
+//                    daniella.leal@ / renato.azevedo@ etcfilmes.com.br
+//   PP_REPLY_TO      (opcional) reply-to do e-mail de confirmação ao usuário
+//
+// O app precisa da permissão de APLICAÇÃO `Mail.Send` (com consentimento do admin).
+// Recomendado restringir a caixa via Application Access Policy (ver README).
 
-const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
-const FROM     = process.env.PP_MAIL_FROM || 'PingPlay <boasvindas@acessonatela.com>';
+const TENANT   = process.env.MS_TENANT_ID || '';
+const CLIENT   = process.env.MS_CLIENT_ID || '';
+const SECRET   = process.env.MS_CLIENT_SECRET || '';
+const SENDER   = process.env.MS_SENDER || '';
 const TEAM     = (process.env.PP_MAIL_TO || 'cassio@etcfilmes.com.br, daniella.leal@etcfilmes.com.br, renato.azevedo@etcfilmes.com.br')
                    .split(',').map(function (s) { return s.trim(); }).filter(Boolean);
 const REPLY_TO = process.env.PP_REPLY_TO || '';
@@ -25,15 +31,29 @@ const LOGO     = SITE_URL + '/assets/pingplay-logo-white.png';
 
 function firstName(n) { return n ? String(n).trim().split(/\s+/)[0] : ''; }
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function recips(list) { return list.map(function (a) { return { emailAddress: { address: a } }; }); }
 
-async function sendResend(body) {
+async function graphToken() {
+  const body = 'client_id=' + encodeURIComponent(CLIENT) +
+    '&client_secret=' + encodeURIComponent(SECRET) +
+    '&scope=' + encodeURIComponent('https://graph.microsoft.com/.default') +
+    '&grant_type=client_credentials';
+  const r = await fetch('https://login.microsoftonline.com/' + encodeURIComponent(TENANT) + '/oauth2/v2.0/token', {
+    method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body,
+  });
+  const j = await r.json().catch(function () { return {}; });
+  if (!r.ok) { console.error('[pingplay-mail] token HTTP ' + r.status + ': ' + JSON.stringify(j)); return ''; }
+  return j.access_token || '';
+}
+
+async function sendMail(token, msg) {
   try {
-    const r = await fetch('https://api.resend.com/emails', {
+    const r = await fetch('https://graph.microsoft.com/v1.0/users/' + encodeURIComponent(SENDER) + '/sendMail', {
       method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + RESEND_API_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg, saveToSentItems: false }),
     });
-    if (!r.ok) console.error('[pingplay-mail] Resend HTTP ' + r.status + ': ' + (await r.text()));
+    if (!r.ok) console.error('[pingplay-mail] sendMail HTTP ' + r.status + ': ' + (await r.text()));
     return r.ok;
   } catch (e) { console.error('[pingplay-mail] erro: ' + e.message); return false; }
 }
@@ -61,13 +81,6 @@ function welcomeHtml(nome) {
     '</div></body></html>';
 }
 
-function welcomeText(nome) {
-  const ola = nome ? 'Olá, ' + nome + '!' : 'Olá!';
-  return ola + '\n\nRecebemos o seu cadastro no PingPlay com sucesso. Em breve entraremos em contato com as próximas informações, de acordo com os interesses que você escolheu.\n\n' +
-    'O PingPlay leva legenda, Libras e audiodescrição para dentro da experiência do cinema.\n\n' + SITE_URL + '\n\n' +
-    'Você recebeu este e-mail porque se cadastrou em queronopingplay.com. Se não quiser mais receber, responda este e-mail avisando.';
-}
-
 function teamHtml(d) {
   const rows = [
     ['Nome', d.nome], ['E-mail', d.email], ['Telefone/WhatsApp', d.telefone],
@@ -90,7 +103,13 @@ exports.handler = async function (event) {
   catch (e) { return { statusCode: 200, body: 'json inválido' }; }
 
   if ((payload.form_name || '') !== 'cadastro-pingplay') return { statusCode: 200, body: 'form ignorado' };
-  if (!RESEND_API_KEY) { console.warn('[pingplay-mail] RESEND_API_KEY ausente'); return { statusCode: 200, body: 'sem RESEND_API_KEY' }; }
+  if (!TENANT || !CLIENT || !SECRET || !SENDER) {
+    console.warn('[pingplay-mail] variáveis do Microsoft Graph ausentes');
+    return { statusCode: 200, body: 'config Graph ausente' };
+  }
+
+  const token = await graphToken();
+  if (!token) return { statusCode: 200, body: 'sem token' };
 
   const d = payload.data || {};
   const email = (d.email || '').trim();
@@ -98,24 +117,23 @@ exports.handler = async function (event) {
   // 1) Confirmação para quem se cadastrou
   if (email) {
     const msg = {
-      from: FROM, to: [email],
       subject: 'Recebemos o seu cadastro no PingPlay',
-      html: welcomeHtml(firstName(d.nome)),
-      text: welcomeText(firstName(d.nome)),
+      body: { contentType: 'HTML', content: welcomeHtml(firstName(d.nome)) },
+      toRecipients: recips([email]),
     };
-    if (REPLY_TO) msg.reply_to = REPLY_TO;
-    await sendResend(msg);
+    if (REPLY_TO) msg.replyTo = recips([REPLY_TO]);
+    await sendMail(token, msg);
   }
 
   // 2) Cópia interna para o time (com todos os dados)
   if (TEAM.length) {
     const msg = {
-      from: FROM, to: TEAM,
       subject: 'Novo cadastro PingPlay: ' + (d.nome || email || '—'),
-      html: teamHtml(d),
+      body: { contentType: 'HTML', content: teamHtml(d) },
+      toRecipients: recips(TEAM),
     };
-    if (email) msg.reply_to = email;
-    await sendResend(msg);
+    if (email) msg.replyTo = recips([email]);
+    await sendMail(token, msg);
   }
 
   return { statusCode: 200, body: 'ok' };
