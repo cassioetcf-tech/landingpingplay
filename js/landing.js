@@ -187,11 +187,9 @@
     if (ok) {
       var msg = $('cad-success-msg');
       if (msg) {
-        var partes = [];
-        if (iTestar) partes.push('avisar sobre sessões de teste');
-        if (iOculos) partes.push('avisar quando os óculos chegarem');
-        if (iIndicar || filme) partes.push('registrar suas indicações de filmes');
-        msg.textContent = 'Obrigado, ' + nome.split(' ')[0] + '! Vamos ' + (partes.length ? partes.join(', ').replace(/,([^,]*)$/, ' e$1') : 'manter você por dentro') + '.';
+        var primeiro = (nome.split(' ')[0] || '');
+        primeiro = primeiro.charAt(0).toUpperCase() + primeiro.slice(1);
+        msg.textContent = 'Obrigado' + (primeiro ? ', ' + primeiro : '') + '! Recebemos seu cadastro e entraremos em contato em breve.';
       }
       ok.hidden = false; ok.focus();
     }
